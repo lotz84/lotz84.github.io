@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>flip map</title>
+    <link>http://lotz84.github.io</link>
+    <description>lots blog</description>
+    <atom:link href="http://lotz84.github.io/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+    
+      <item>
+        <title>Haskell から MySQL を使う</title>
+        <description><![CDATA[]]></description>
+        <pubDate>Mon Dec 01 2014 00:00:00 GMT+0900 (JST)</pubDate>
+        <link>http://lotz84.github.io/posts/use-mysql-from-haskell</link>
+        <guid isPermaLink="true">http://lotz84.github.io/posts/use-mysql-from-haskell</guid>
+      </item>
+    
+    
+    
+      <item>
+        <title>HaskellでSeleniumを使ってみる＠勉強会</title>
+        <description><![CDATA[]]></description>
+        <pubDate>Sun Dec 14 2014 00:00:00 GMT+0900 (JST)</pubDate>
+        <link>http://lotz84.github.io/posts/use-selenium-by-haskell</link>
+        <guid isPermaLink="true">http://lotz84.github.io/posts/use-selenium-by-haskell</guid>
+      </item>
+    
+    
+    
+      <item>
+        <title>Swift で分割コンパイルする方法</title>
+        <description><![CDATA[]]></description>
+        <pubDate>Sat Feb 07 2015 00:00:00 GMT+0900 (JST)</pubDate>
+        <link>http://lotz84.github.io/posts/the-way-of-separate-compilation-in-swift</link>
+        <guid isPermaLink="true">http://lotz84.github.io/posts/the-way-of-separate-compilation-in-swift</guid>
+      </item>
+    
+    
+    
+      <item>
+        <title>Parsecで計算機を書いてみた</title>
+        <description><![CDATA[]]></description>
+        <pubDate>Tue Feb 10 2015 00:00:00 GMT+0900 (JST)</pubDate>
+        <link>http://lotz84.github.io/posts/write-calculator-using-parsec</link>
+        <guid isPermaLink="true">http://lotz84.github.io/posts/write-calculator-using-parsec</guid>
+      </item>
+    
+    
+    
+      <item>
+        <title>レンズは余状態余モナドの余代数だった</title>
+        <description><![CDATA[]]></description>
+        <pubDate>Sat Apr 04 2015 00:00:00 GMT+0900 (JST)</pubDate>
+        <link>http://lotz84.github.io/posts/lenses-are-the-coalgebras-for-the-costate-comonad</link>
+        <guid isPermaLink="true">http://lotz84.github.io/posts/lenses-are-the-coalgebras-for-the-costate-comonad</guid>
+      </item>
+    
+    
+    
+      <item>
+        <title>Haskellで簡単に乱数を使ってみる</title>
+        <description><![CDATA[]]></description>
+        <pubDate>Wed Apr 08 2015 00:00:00 GMT+0900 (JST)</pubDate>
+        <link>http://lotz84.github.io/posts/use-random-easily-in-haskell</link>
+        <guid isPermaLink="true">http://lotz84.github.io/posts/use-random-easily-in-haskell</guid>
+      </item>
+    
+  </channel>
+</rss>
