@@ -1,0 +1,286 @@
+<!DOCTYPE html><html><head><title>flip map</title><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora"><link rel="stylesheet" href="/css/kube.min.css"><link rel="stylesheet" href="/css/prism.css"><link rel="stylesheet" href="/css/main.css"><script type="text/javascript" src="/js/prism.js"></script></head><body><div class="units-row units-padding"><div class="unit-20 sidemenu"><h1 id="-flip-map-"><a href="/">flip map</a></h1>
+<p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160" alt=""></a></p>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href="/about">About</a></li>
+<li><a href="/posts/">Blog</a></li>
+<li><a href="https://github.com/lotz84">Github</a></li>
+<li><a href="https://twitter.com/lotz84_">Twitter</a></li>
+</ul>
+</div><div class="unit-80"><h1>Haskell から MySQL を使う</h1><p>2014/12/01</p>
+<p>ひょんなことからHaskellで簡単な掲示板を作る機会があったので
+その時に覚えた<a href="https://hackage.haskell.org/package/mysql-simple">mysql-simple</a>の使い方を書き留めておこうと思います。</p>
+<h2>環境構築</h2><p>テスト用のディレクトリとcabalファイルを作ってmysql-simpleを入れます</p>
+<pre><code class="language-bash">$ mkdir mysql-test &amp;&amp; cd mysql-test
+$ cabal sandbox init
+</code></pre>
+<p>mysql-test.cabal を作ります。これはライブラリの依存関係を記述するファイルです。</p>
+<pre><code class="language-bash">$ vim mysql-test.cabal
+</code></pre>
+<pre><code class="language-markup">name: mysql-test
+version: 0.0.0.1
+build-type: Simple
+cabal-version: &gt;=1.20
+
+executable app
+  main-is: app.hs
+  build-depends: base, mysql-simple
+  ghc-options: -Wall
+  default-language: Haskell2010
+</code></pre>
+<p>依存ライブラリをインストールしましょう。</p>
+<pre><code class="language-bash">$ cabal install --only-dependencies
+</code></pre>
+<p>実際にアプリケーションを書いていきます</p>
+<pre><code class="language-bash">$ vim app.hs
+</code></pre>
+<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
+
+import Database.MySQL.Simple
+
+main :: IO ()
+main = do
+  conn &lt;- connect defaultConnectInfo
+  [Only i] &lt;- query_ conn &quot;select 2 + 2&quot;
+  print (i :: Int)
+</code></pre>
+<p>実行します。このときMySQLサーバーが立ち上がってることを確認して下さい。</p>
+<pre><code class="language-bash">$ cabal run app
+4
+</code></pre>
+<p><code>4</code> が表示されれば成功です！</p>
+<p>テスト用のDBを作っておきましょう。</p>
+<pre><code class="language-bash">$ mysql -uroot
+mysql&gt; CREATE DATABASE mysql_test;
+mysql&gt; USE mysql_test;
+mysql&gt; CREATE TABLE user (id int unsigned, name varchar(255), PRIMARY KEY (id));
+</code></pre>
+<h2>CRUD</h2><h3>CREATE</h3><pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
+
+import Database.MySQL.Simple
+
+main :: IO ()
+main = do
+  conn &lt;- connect defaultConnectInfo { connectDatabase = &quot;mysql_test&quot; }
+  execute conn &quot;INSERT INTO user VALUES (?, ?)&quot; (1 :: Int, &quot;a&quot; :: String)
+  return ()
+</code></pre>
+<p>実行すると確かにデータが挿入されているはずです</p>
+<pre><code class="language-bash">mysql&gt; SELECT * FROM user;
++----+------+
+| id | name |
++----+------+
+|  1 | a    |
++----+------+
+</code></pre>
+<p>main関数を一行ずつ見て行きましょう
+最初の行はMySQLとの接続をしています</p>
+<pre><code class="language-haskell">conn &lt;- connect defaultConnectInfo { connectDatabase = &quot;mysql_test&quot; }
+</code></pre>
+<p><code>connect</code>と<code>defaultConnectInfo</code>の情報を調べてみましょう。</p>
+<pre><code class="language-bash">$ ghci
+Prelude&gt; :m Database.MySQL.Simple
+
+Prelude&gt; :t connect
+connect :: ConnectInfo -&gt; IO Connection
+
+Prelude&gt; :t defaultConnectInfo
+defaultConnectInfo :: ConnectInfo
+
+Prelude&gt; :i ConnectInfo
+data ConnectInfo
+  = ConnectInfo {connectHost :: String,
+                 connectPort :: GHC.Word.Word16,
+                 connectUser :: String,
+                 connectPassword :: String,
+                 connectDatabase :: String,
+                 connectOptions :: [Database.MySQL.Base.Types.Option],
+                 connectPath :: FilePath,
+                 connectSSL :: Maybe Database.MySQL.Base.SSLInfo}
+
+Prelude&gt; defaultConnectInfo
+ConnectInfo {connectHost = &quot;localhost&quot;, connectPort = 3306, connectUser = &quot;root&quot;, connectPassword = &quot;&quot;, connectDatabase = &quot;test&quot;, connectOptions = [CharsetName &quot;utf8&quot;], connectPath = &quot;&quot;, connectSSL = Nothing}
+</code></pre>
+<p>ここまで見れば明らかですが<a href="https://hackage.haskell.org/package/mysql-simple/docs/Database-MySQL-Simple.html#v:defaultConnectInfo">defaultConnectInfo</a>は<a href="https://hackage.haskell.org/package/mysql-simple-0.2.2.4/docs/Database-MySQL-Simple.html#t:ConnectInfo">ConnectInfo</a>型でこれはMySQLに接続するために必要な情報を格納するレコードです。<a href="https://hackage.haskell.org/package/mysql-simple/docs/Database-MySQL-Simple.html#v:connect">connect</a>はこれを引数にとってMySQLと接続するための関数です。<code>defaultConnectInfo</code>のままでは<code>test</code>のDBを見に行ってしまうのでレコード構文を使って先ほど作ったDBを見に行くように変えています。</p>
+<pre><code class="language-haskell">defaultConnectInfo { connectDatabase = &quot;mysql_test&quot; }
+</code></pre>
+<p>次の行は実際にデータを挿入しているところです</p>
+<pre><code class="language-haskell">execute conn &quot;INSERT INTO user VALUES (?, ?)&quot; (1 :: Int, &quot;a&quot; :: String)
+</code></pre>
+<p>mysql-simpleには<a href="https://hackage.haskell.org/package/mysql-simple/docs/Database-MySQL-Simple.html#v:query">query</a>と<a href="https://hackage.haskell.org/package/mysql-simple/docs/Database-MySQL-Simple.html#v:execute">execute</a>の２つのクエリを実行する関数があります。queryはSELECT文のように何か結果を返すようなクエリの実行に、executeはINSERTやUPDATEのような何も結果を返さないようなクエリの実行に使います。今回はINSERTなのでexecuteを使っています。
+クエリの中の&quot;?&quot;は後の引数のタプルの要素がサニタイジングされて代入されます。クエリ中の&quot;?&quot;の個数とタプルの要素数は一致していないといけません。
+<code>(1 :: Int, &quot;a&quot; :: String)</code>の部分は少し見にくいですが本質的には(1,&quot;a&quot;)のタプルで、リテラルだと型がわからないので型注釈が入った形になっています。</p>
+<p>最後の</p>
+<pre><code class="language-haskell">return ()
+</code></pre>
+<p>の行はmain関数の型を合わせるために入っています。</p>
+<p>一気に十人ぐらいのデータを入れてみましょう。</p>
+<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
+
+import Control.Monad
+import Database.MySQL.Simple
+
+main :: IO ()
+main = do
+  conn &lt;- connect defaultConnectInfo { connectDatabase = &quot;mysql_test&quot; }
+  forM (zip [2..10] [&#39;b&#39;..]) $ \(n, c) -&gt; do
+    execute conn &quot;INSERT INTO user VALUES (?, ?)&quot; (n :: Int, [c])
+  return ()
+</code></pre>
+<h3>READ</h3><p>先ほど入れたデータを今度は読んでみましょう</p>
+<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
+
+import Database.MySQL.Simple
+
+main :: IO ()
+main = do
+  conn &lt;- connect defaultConnectInfo { connectDatabase = &quot;mysql_test&quot; }
+  rs &lt;- query_ conn &quot;SELECT * FROM user&quot;
+  mapM_ putStrLn $ map show (rs :: [(Int, String)])
+</code></pre>
+<p>実行すると</p>
+<pre><code class="language-bash">$ cabal run app
+(1,&quot;a&quot;)
+(2,&quot;b&quot;)
+(3,&quot;c&quot;)
+(4,&quot;d&quot;)
+(5,&quot;e&quot;)
+(6,&quot;f&quot;)
+(7,&quot;g&quot;)
+(8,&quot;h&quot;)
+(9,&quot;i&quot;)
+(10,&quot;j&quot;)
+</code></pre>
+<p>ちゃんと表示されると思います。</p>
+<p><a href="https://hackage.haskell.org/package/mysql-simple-0.2.2.4/docs/Database-MySQL-Simple.html#v:query_">query_</a>, <a href="https://hackage.haskell.org/package/mysql-simple-0.2.2.4/docs/Database-MySQL-Simple.html#v:execute_">execute_</a>はquery, executeとほとんど同じですが、クエリ中に&quot;?&quot;が無くタプルを引数としてとらない場合に使います。
+実行結果は<code>(rs :: [(Int, String)])</code>のように正しく型付けしてやる必要があります。</p>
+<pre><code class="language-haskell">type User = (Int, String)
+</code></pre>
+<p>のようにしておけば<code>(rs :: [User])</code>のように書くことも出来ます。</p>
+<h3>UPDATE, DELETE</h3><p>ここまでくればUPDATEとDELETEは自然に書けると思います。</p>
+<h4>UPDATE</h4><pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
+
+import Database.MySQL.Simple
+
+main :: IO ()
+main = do
+  conn &lt;- connect defaultConnectInfo { connectDatabase = &quot;mysql_test&quot; }
+  execute_ conn &quot;UPDATE user SET name = &#39;aa&#39; WHERE id = 1&quot;
+  return ()
+</code></pre>
+<h4>DELETE</h4><pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
+
+import Database.MySQL.Simple
+
+main :: IO ()
+main = do
+  conn &lt;- connect defaultConnectInfo { connectDatabase = &quot;mysql_test&quot; }
+  execute_ conn &quot;DELETE FROM user WHERE id = 10&quot;
+  return ()
+</code></pre>
+<h2>簡単なアプリを作ってみる</h2><p>最後にさっき作った<code>user</code>テーブルを読み書きするだけの簡単なアプリを作ってみます</p>
+<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
+
+import Control.Monad
+import Database.MySQL.Simple
+
+type User = (Int, String)
+
+getConnection:: IO Connection
+getConnection = connect defaultConnectInfo { connectDatabase = &quot;mysql_test&quot; }
+
+mySelect :: IO ()
+mySelect = do
+  conn &lt;- getConnection
+  rs   &lt;- query_ conn &quot;SELECT * FROM user&quot;
+  mapM_ putStrLn $ map show (rs :: [User])
+
+myInsert :: IO ()
+myInsert = do
+  putStrLn &quot;Data: &quot;
+  input &lt;- getLine
+  let user = (read $ concat [&quot;(&quot;, input, &quot;)&quot;]) :: User
+  conn &lt;- getConnection
+  execute conn &quot;INSERT INTO user VALUES (?, ?)&quot; user
+  return ()
+
+myUpdate :: IO ()
+myUpdate = do
+  putStrLn &quot;Data: &quot;
+  input &lt;- getLine
+  let (n, name) = (read $ concat [&quot;(&quot;, input, &quot;)&quot;]) :: User
+  conn &lt;- getConnection
+  execute conn &quot;UPDATE user SET name = ? WHERE id = ?&quot; (name, n)
+  return ()
+
+myDelete :: IO ()
+myDelete = do
+  putStrLn &quot;ID: &quot;
+  input &lt;- getLine
+  let n = read input :: Int
+  conn &lt;- getConnection
+  execute conn &quot;DELETE FROM user WHERE id = ?&quot; (Only n)
+  return ()
+
+main :: IO ()
+main = do
+  putStrLn &quot;Command: &quot;
+  command &lt;- getLine
+  case command of
+    &quot;show&quot;   -&gt; mySelect &gt;&gt; main
+    &quot;insert&quot; -&gt; myInsert &gt;&gt; main
+    &quot;update&quot; -&gt; myUpdate &gt;&gt; main
+    &quot;delete&quot; -&gt; myDelete &gt;&gt; main
+    &quot;exit&quot;   -&gt; putStrLn &quot;Bye.&quot; &gt;&gt; return ()
+    _        -&gt; putStrLn &quot;Command: show, insert, update, deletem or exit&quot; &gt;&gt; main
+</code></pre>
+<p>実際にコピペして実行してみてください。
+以下のような感じで遊ぶことが出来ます</p>
+<pre><code class="language-haskell">$ cabal run app
+Command:
+show
+(1,&quot;aa&quot;)
+(2,&quot;b&quot;)
+(3,&quot;c&quot;)
+(4,&quot;d&quot;)
+(5,&quot;e&quot;)
+(6,&quot;f&quot;)
+(7,&quot;g&quot;)
+(8,&quot;h&quot;)
+(9,&quot;i&quot;)
+Command:
+insert
+Data:
+10, &quot;haskell&quot;
+Command:
+delete
+ID:
+8
+Command:
+show
+(1,&quot;aa&quot;)
+(2,&quot;b&quot;)
+(3,&quot;c&quot;)
+(4,&quot;d&quot;)
+(5,&quot;e&quot;)
+(6,&quot;f&quot;)
+(7,&quot;g&quot;)
+(9,&quot;i&quot;)
+(10,&quot;haskell&quot;)
+Command:
+exit
+Bye.
+</code></pre><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+</script><div id="fb-root"></div><script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38246049-16', 'auto');
+ga('send', 'pageview');</script></body></html>

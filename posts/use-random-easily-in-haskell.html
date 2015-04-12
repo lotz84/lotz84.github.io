@@ -1,0 +1,44 @@
+<!DOCTYPE html><html><head><title>flip map</title><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora"><link rel="stylesheet" href="/css/kube.min.css"><link rel="stylesheet" href="/css/prism.css"><link rel="stylesheet" href="/css/main.css"><script type="text/javascript" src="/js/prism.js"></script></head><body><div class="units-row units-padding"><div class="unit-20 sidemenu"><h1 id="-flip-map-"><a href="/">flip map</a></h1>
+<p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160" alt=""></a></p>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href="/about">About</a></li>
+<li><a href="/posts/">Blog</a></li>
+<li><a href="https://github.com/lotz84">Github</a></li>
+<li><a href="https://twitter.com/lotz84_">Twitter</a></li>
+</ul>
+</div><div class="unit-80"><h1>Haskellで簡単に乱数を使ってみる</h1><p>Haskellで乱数というとすぐにStdGenが出てきて面倒くさいイメージがありますが
+再現性を気にせず手軽にランダムな値が欲しいだけなら難しいことを考える必要はありません</p>
+<p>以下はモンテカルロ法で円周率を求めるプログラムです。
+乱数生成に使っているのは<a href="https://hackage.haskell.org/package/random/docs/System-Random.html">System.Random</a>の<a href="https://hackage.haskell.org/package/random/docs/System-Random.html#v:randomRIO">randomRIO</a>という<a href="https://hackage.haskell.org/package/random/docs/System-Random.html#t:Random">Random</a>クラスのメソッドです</p>
+<pre><code class="language-haskell">import System.Random
+
+trial :: Int -&gt; IO Int
+trial inner = do
+    x &lt;- randomRIO (0, 1) :: IO Double
+    y &lt;- randomRIO (0, 1) :: IO Double
+    if x ^ 2 + y ^ 2 &lt;= 1
+    then return (inner + 1)
+    else return inner
+
+experience :: [IO Int]
+experience = iterate (&gt;&gt;= trial) (return 0) 
+
+main = do
+    inner &lt;- experience !! 10000
+    print $ 4 * (fromIntegral inner) / 10000
+</code></pre>
+<p>これで<code>x, y</code>には0から1までのランダムなDoulbeの値が入ります</p><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+</script><div id="fb-root"></div><script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38246049-16', 'auto');
+ga('send', 'pageview');</script></body></html>
