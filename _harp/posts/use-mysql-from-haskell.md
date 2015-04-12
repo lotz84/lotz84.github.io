@@ -1,6 +1,3 @@
-#Haskell から MySQL を使う
-2014/12/01
-
 ひょんなことからHaskellで簡単な掲示板を作る機会があったので
 その時に覚えた[mysql-simple](https://hackage.haskell.org/package/mysql-simple)の使い方を書き留めておこうと思います。
 

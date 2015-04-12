@@ -1,5 +1,29 @@
 {
     "index": {
         "layout": "../_layout.jade"
+    },
+    "use-mysql-from-haskell": {
+        "title": "Haskell から MySQL を使う",
+        "date": "2014/12/01"
+    },
+    "use-selenium-by-haskell": {
+        "title": "HaskellでSeleniumを使ってみる＠勉強会",
+        "date": "2014/12/14"
+    },
+    "the-way-of-separate-compilation-in-swift": {
+        "title": "Swift で分割コンパイルする方法",
+        "date": "2015/02/07"
+    },
+    "write-calculator-using-parsec": {
+        "title": "Parsecで計算機を書いてみた",
+        "date": "2015/02/10"
+    },
+    "lenses-are-the-coalgebras-for-the-costate-comonad": {
+        "title": "レンズは余状態余モナドの余代数だった",
+        "date": "2015/04/04"
+    },
+    "use-random-easily-in-haskell": {
+        "title": "Haskellで簡単に乱数を使ってみる",
+        "date": "2015/04/08"
     }
 }
