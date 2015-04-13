@@ -2,6 +2,10 @@
     "index": {
         "layout": "../_layout.jade"
     },
+    "whether-the-programmer-is-a-zako-of-writing-the-haskell": {
+        "title": "Haskellを書いてるプログラマーはザコなのか",
+        "date": "2015/04/13"
+    },
     "use-random-easily-in-haskell": {
         "title": "Haskellで簡単に乱数を使ってみる",
         "date": "2015/04/08"

@@ -1,0 +1,188 @@
+<!DOCTYPE html><html><head><title>Haskellを書いてるプログラマーはザコなのか </title><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora"><link rel="stylesheet" href="/css/kube.min.css"><link rel="stylesheet" href="/css/prism.css"><link rel="stylesheet" href="/css/main.css"><script type="text/javascript" src="/js/prism.js"></script></head><body><div class="units-row units-padding"><div class="unit-20 sidemenu"><h1 id="-flip-map-"><a href="/">flip map</a></h1>
+<p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160" alt=""></a></p>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href="/about">About</a></li>
+<li><a href="/posts/">Blog</a></li>
+<li><a href="https://github.com/lotz84">Github</a></li>
+<li><a href="https://twitter.com/lotz84_">Twitter</a></li>
+</ul>
+</div><div class="unit-80"><h1>Haskellを書いてるプログラマーはザコなのか</h1><p>2015/04/13</p><p><strong>tl;dr</strong><br>そんなわけないからJavaと比較して検討してみた。</p>
+<p>自分のツイートがプチ炎上しました</p>
+<p><a href="https://twitter.com/lotz84_/status/586785908105416704"><img src="http://i.gyazo.com/04de63d6dfce54b05f05c8d0d575f1e3.png" alt=""></a></p>
+<p>関数型界隈はただでさえコミュニティが尖ってて怖いとか言われるのに自分もその端くれながら攻撃的な発言をしてしまって申し訳なく思っています。弁明も兼ねてnullが無くても再代入ができ無くても社会で通用するコードを量産しているJavaと負けず劣らないコードが書けることを具体例を上げて説明したいと思います。</p>
+<h2>再代入できない</h2><p>Haskellは変数への再代入ができません。どういうことかというと一度値を代入した値に別の値を入れることが不可能なのです。例えばJavaでは</p>
+<pre><code class="language-java">class Main {
+    public static void main(String[] args) {
+        int x = 0;
+        x = 1;
+
+        System.out.println(x);
+    }
+}
+</code></pre>
+<p>この様に一度宣言した変数xに何回も値を代入することができます。しかしHaskellでは</p>
+<pre><code class="language-haskell">x = 0
+x = 1
+
+main = print x
+</code></pre>
+<p>なんて書くと<code>Multiple declarations of ‘x’</code>と言ってコンパイラに怒られます。</p>
+<p>だったら再代入が絶対に必要そうな処理はどうかくのか、例えば配列の中身を全部足し合わせる処理は合計を保存するような変数を用意して<code>for</code>文でリストの中身を回して足し合わせなければいけないような気がします。Javaで書くと</p>
+<pre><code class="language-java">class Main {
+    public static void main(String[] args) {
+        int[] array = {1, 2, 3, 4, 5};
+        int total = 0;
+        for (int i : array) {
+            total += i;
+        }
+
+        System.out.println(total);
+    }
+}
+</code></pre>
+<p>こう書けます。ではHaskellで同じような処理を書くとどうなるでしょう。</p>
+<pre><code class="language-haskell">array = [1, 2, 3, 4, 5]
+total = sum array
+
+main = print total
+</code></pre>
+<p>こうなります。ですがちょっと待って下さい、今回は<code>sum</code>という<strong>リストの中身を全部足し合わせる</strong>関数がたまたまあっただけかもしれません。しかし<code>sum</code>を更に詳しく見ていけば再代入が不要になるトリックが見えてきます。<code>sum</code>の定義は</p>
+<pre><code class="language-haskell">sum = foldl (+) 0
+</code></pre>
+<p>となっています。<code>foldl</code>という新しい関数が出てきました。この関数の定義は</p>
+<pre><code class="language-haskell">foldl :: (b -&gt; a -&gt; b) -&gt; b -&gt; [a] -&gt; b
+foldl f z []     =  z
+foldl f z (x:xs) =  foldl f (f z x) xs
+</code></pre>
+<p>となります。目を回すかもしれませんが具体的な値を入れてその動作を見て行きましょう。 さっきの例の場合は結局</p>
+<pre><code class="language-haskell">foldl (+) 0 [1, 2, 3, 4, 5]
+</code></pre>
+<p>を計算することになります。これを<code>foldl</code>の定義を照らしあわせて評価していくと</p>
+<pre><code class="language-markup">foldl (+) 0 [1, 2, 3, 4, 5]
+foldl (+) 0 (1 : [2, 3, 4, 5])
+foldl (+) (0 + 1) [2, 3, 4, 5]
+foldl (+) (0 + 1) (2 : [3, 4, 5])
+foldl (+) ((0 + 1) + 2) [3, 4, 5]
+foldl (+) ((0 + 1) + 2) (3 : [4, 5])
+foldl (+) (((0 + 1) + 2) + 3) [4, 5]
+foldl (+) (((0 + 1) + 2) + 3) (4 : [5])
+foldl (+) ((((0 + 1) + 2) + 3) + 4) [5]
+foldl (+) ((((0 + 1) + 2) + 3) + 4) (5 : [])
+foldl (+) (((((0 + 1) + 2) + 3) + 4) + 5) []
+((((0 + 1) + 2) + 3) + 4) + 5
+1 + 2 + 3 + 4 + 5
+</code></pre>
+<p><code>foldl</code>という関数がリストの値を1つづつ足していく関数を巧みに組み立てていくのがおわかりいただけたでしょうか。Haskellがやっていたのは変数に値を足していくことではなく、<strong>関数で関数を組み上げていくこと</strong>だったのです。同じ方法を用いて&quot;文字列を全て足し合わせる処理&quot;とか&quot;リストの中の最大値を求める処理&quot;を書くこともできます。</p>
+<pre><code class="language-haskell">strs = [&quot;apple&quot;, &quot;orange&quot;, &quot;grape&quot;]
+coupled = foldl (++) &quot;&quot; strs
+
+main = putStrLn coupled
+-- appleorangegrape
+</code></pre>
+<pre><code class="language-haskell">nums = [3, 1, 4, 1, 5, 9, 2]
+highest = foldl max 0 nums
+
+main = print highest
+-- 9
+</code></pre>
+<p>累積用の変数も一時保存用の変数も必要ありません。</p>
+<p>もちろんこんな単純な例だけで再代入を使わずに全てのプログラムが書けることを証明したわけではありません。ですが再代入を使えなくても案外いろんな処理を書けるものだと思ってもらえれば幸いです。</p>
+<h2>nullが無い</h2><p>最近になってJavaにもOptionalが導入されましたが既存ライブラリがすぐに対応するわけでもなく今でもJavaはnullの温床になっています。nullをなんでこんなに悪く言うのかというと10億ドルの過ちだからとか別にそういうのはどうでもよくて単にこいつのせいで何度もコードが落ちて大変な目にあったからです。個人的な恨みです。</p>
+<p>具体例から見て行きましょう。名前と成績が組になったデータ構造を考えてその配列から特定の成績をとった人の名前を調べたいとします。Javaの場合は成績と配列を渡せば目的の値を返すか、もし見つからなければnullを返すような関数を書けばいいでしょう。</p>
+<pre><code class="language-java">class Result {
+    private String name;
+    private Integer score;
+
+    Result (String name, Integer score) {
+        this.name = name;
+        this.score = score;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+}
+</code></pre>
+<pre><code class="language-java">class Main {
+    public static void main(String[] args) {
+        Result array[] = new Result[5];
+        array[0] = new Result(&quot;藤原&quot;, 80);
+        array[1] = new Result(&quot;水橋&quot;, 65);
+        array[2] = new Result(&quot;伊吹&quot;, 20);
+        array[3] = new Result(&quot;八雲&quot;, 100);
+        array[4] = new Result(&quot;散野&quot;, 0);
+
+        Result target = search(100, array);
+        if (target == null) {
+            System.out.println(&quot;満点はいませんでした&quot;);
+        } else {
+            System.out.println(&quot;満点は&quot; + target.getName() + &quot;です&quot;);
+        }
+    }
+
+    public static Result search(Integer score, Result[] array) {
+        if (score == null) {
+            return null;
+        }
+        for (Result target : array) {
+            if (target.getScore() != null &amp;&amp; target.getScore().intValue() == score.intValue()) {
+                return target;
+            }
+        }
+        return null;
+    }
+}
+</code></pre>
+<p>ではHaskellだとどう書けるでしょうか。もし目的の値が見つからなかった時に何を返せばいいでしょうか。Haskellはこういう場合、すなわち関数が返すべき値が無いような場合が存在する時、関数の返り値をMaybe型に包んで返すということをします。Maybe型とは</p>
+<pre><code class="language-haskell">data Maybe a = Nothing | Just a
+</code></pre>
+<p>と定義される型でその値は<code>Nothing (何も無い値)</code>か<code>Just a (存在してその値はa)</code>の二種類があります。早速ですが例を見て行きましょう。</p>
+<pre><code class="language-haskell">import Data.List
+
+data Result = Result { name :: String
+                     , score :: Int
+                     }
+
+array = [ Result {name=&quot;藤原&quot;, score=80}
+        , Result {name=&quot;水橋&quot;, score=65}
+        , Result {name=&quot;伊吹&quot;, score=20}
+        , Result {name=&quot;八雲&quot;, score=100}
+        , Result {name=&quot;散野&quot;, score=0}
+        ]
+
+main = do
+    let target = find (\r -&gt; score r == 100) array
+    case target of
+        Just r  -&gt; putStrLn $ &quot;満点は&quot; ++ name r ++ &quot;です&quot;
+        Nothing -&gt; putStrLn &quot;満点はいませんでした&quot;
+</code></pre>
+<p>先ほどのJavaと同等なプログラムです。ポイントはtargetの型が単なる<code>Result</code>ではなく<code>Maybe Result</code>であるというところです。そのため<code>name</code>や<code>score</code>といった関数を直接使うことが<strong>できず</strong>、case文を用いて処理を分岐してやる必要があります。もし<code>name target</code>なんて書いた日にはコンパイラに怒られます。厳しいですがこれが愛なのです。</p>
+<p>簡単な例でしたがHaskellではnullのような概念を使わずにMaybe型でうまくやっているというのがわかってもらえたでしょうか。</p>
+<h2>まとめ</h2><p>Haskellにはnullが無いし再代入できる変数もありません。だからといって使えない言語でもありません。簡単な例でしたがJavaと同等で負けず劣らないコードを書けることを見てきました。ツイートはプチ炎上しましたが多くの人がHaskellを知るきっかけになってもらえれば幸いです。最後に僕が言うまでもなくHaskellは多くの企業で採用され実際に使われている言語です。あとこの手の話が好きならこっちの記事もオススメです👉<a href="http://postd.cc/are-haskell-engineers-second-rate/">【翻訳】Haskellのエンジニアは二流なのか？　（答えはノーである）</a></p><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+</script><div id="fb-root"></div><script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38246049-16', 'auto');
+ga('send', 'pageview');
+</script><script type="text/javascript">var nend_params = {"media":9473,"site":133290,"spot":352659,"type":1,"oriented":1};</script><script type="text/javascript" src="http://js1.nend.net/js/nendAdLoader.js"></script></body></html>
