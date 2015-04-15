@@ -2,6 +2,10 @@
     "index": {
         "layout": "../_layout.jade"
     },
+    "playing-in-the-higher-order-polymorphic-type": {
+        "title": "高階多相型で遊んでみる",
+        "date": "2015/04/15"
+    },
     "whether-the-programmer-is-a-zako-of-writing-the-haskell": {
         "title": "Haskellを書いてるプログラマーはザコなのか",
         "date": "2015/04/13"

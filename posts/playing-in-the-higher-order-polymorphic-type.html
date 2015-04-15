@@ -1,0 +1,163 @@
+<!DOCTYPE html><html><head><title>高階多相型で遊んでみる </title><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora"><link rel="stylesheet" href="/css/kube.min.css"><link rel="stylesheet" href="/css/prism.css"><link rel="stylesheet" href="/css/main.css"><script type="text/javascript" src="/js/prism.js"></script></head><body><div class="units-row units-padding"><div class="unit-20 sidemenu"><h1 id="-flip-map-"><a href="/">flip map</a></h1>
+<p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160" alt=""></a></p>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href="/about">About</a></li>
+<li><a href="/posts/">Blog</a></li>
+<li><a href="https://github.com/lotz84">Github</a></li>
+<li><a href="https://twitter.com/lotz84_">Twitter</a></li>
+</ul>
+<script type="text/javascript">var nend_params = {"media":9473,"site":133290,"spot":352659,"type":1,"oriented":1};</script><script type="text/javascript" src="http://js1.nend.net/js/nendAdLoader.js"></script></div><div class="unit-80"><h1>高階多相型で遊んでみる</h1><p>2015/04/15</p><p>「高階多相型ってなんですの？」</p>
+<p>TaPLを読んだわけでもなくSystemFを理解したわけでもなくただキーワードに惹かれて高階多相型について最近調べていたのですが、面白い例を見つけたのでまとめてみようと思います。</p>
+<h2>なんでも入るリスト</h2><p>みなさんはJavaScriptを書きますか？僕はJavaScriptが大好きです。JavaScriptでは例えば以下のような配列を作ることができます。</p>
+<pre><code class="language-javascript">var array = [1, 2, &quot;three&quot;, false, {&quot;five&quot;:6}];
+</code></pre>
+<p>では同じようなことをHaskellでも出来るでしょうか？</p>
+<pre><code class="language-haskell">list = [1, 2, &quot;three&quot;, False, (&quot;five&quot;, 6)]
+</code></pre>
+<pre><code class="language-bash">Couldn&#39;t match expected type ‘[Char]’ with actual type ‘Bool’
+</code></pre>
+<p>うーん、怒られてしまいますね。どうにかしてこのリストを正しく型付けできないでしょうか？</p>
+<p>そこで出てくるのが高階多相型です！</p>
+<pre><code class="language-haskell">{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ExistentialQuantification #-}
+
+data Any = forall a. Any a
+
+list :: [Any]
+list = [Any 1, Any 2, Any &quot;three&quot;, Any False, Any (&quot;five&quot;, 6)]
+</code></pre>
+<p>実行はできませんが実際これがghciで正常にロードできるのを確認してみてください！</p>
+<p>このリストなんでも入ると言っておきながら<code>Any</code>というデータ構築子で中身を一回包んでいますね。データ構築子を使っていいなら例えばMaybe型だって全て<code>Maybe a</code>の型にできるので同じようなリストを作れそうなものです。</p>
+<pre><code class="language-haskell">list = [Just 1, Just 2, Just &quot;three&quot;, Just False, Just (&quot;five&quot;, 6)]
+</code></pre>
+<pre><code class="language-bash">Couldn&#39;t match expected type ‘[Char]’ with actual type ‘Bool’
+</code></pre>
+<p>しかしさっきと全く同じエラーで怒られてしまいます。なんでだろうとセルフ型推論して見ると、まずリストの先頭は<code>Just 1</code>で型はたぶん<code>Num a =&gt; Just a</code>です。次の要素も型は同じで、その次の要素は<code>Just &quot;three&quot;</code>で型は<code>Just [Char]</code>になっています。これは型が違いますね！</p>
+<p>ではなぜAny型では成功したのでしょうか。Maybe型とAny型の定義をもう一度並べてみます。</p>
+<pre><code class="language-haskell">data Any     = forall a. Any a
+data Maybe a = Nothing | Just a
+</code></pre>
+<p>何が違うかわかりますか？一番の違いは型変数が左辺に現れているかどうか、つまりそもそも型のカインドが違うのです！</p>
+<pre><code class="language-bash">ghci&gt; :k Any
+Any :: *
+ghci&gt; :k Maybe
+Maybe :: * -&gt; *
+</code></pre>
+<p><code>Maybe a</code> は<code>Nothing</code>もしくは<code>Just a</code>を値としてとります。この時<code>Just a</code>の<code>a</code>の型は<code>Maybe a</code>の型として決まってしまっています。それに対して<code>Any</code>は<code>forall a. Any a</code>を値としてとります。読み方は任意の型aに対して<code>Any a</code>はAny型の値となる、です。なのでAny型のデータ構築子<code>Any</code>に適用する値はどんな型のものでも大丈夫なのです！そしてそれら全てがAny型という一つの型に型付けされるからコンパイラに怒られなくて済むというわけです。</p>
+<p>さてここまではいいのですが、いざ<code>list :: [Any]</code>を何かに使ってみようとすると少し困ったことがわかります。<code>Any</code>でくるんだ値はパターンマッチで取り出せばいいのですが、取り出したあとにそれがどういう型の値かわからないので使いようがありません。数値として扱えるのか<code>print</code>で表示できるのか<code>==</code>で評価できるのかさえわかりません。</p>
+<p>ですのでもう少し使いやすくするためにAny型より少し制約を強めた型を作ってみましょう</p>
+<pre><code class="language-haskell">{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ExistentialQuantification #-}
+
+data Printable = forall a. Show a =&gt; Printable a
+
+instance Show Printable where
+    show (Printable a) = show a
+
+list :: [Printable]
+list = [Printable 1, Printable 2, Printable &quot;three&quot;, Printable False, Printable (&quot;five&quot;, 6)]
+
+main = print list
+</code></pre>
+<pre><code class="language-bash">$ runhaskell Main.hs
+[1,2,&quot;three&quot;,False,(&quot;five&quot;,6)]
+</code></pre>
+<p>やった！ごちゃまぜのリストを表示することができました！！すごいぞ高階多相型！！！</p>
+<p>Printable型の定義は</p>
+<pre><code class="language-haskell">data Printable = forall a. Show a =&gt; Printable a
+</code></pre>
+<p>こうなっています。読み方は任意の型aに対してもしそれがShowクラスのインスタンスなら<code>Printable a</code>はPrintable型の値となる、です。Showクラスのインスタンスで無い型の値を<code>Printable</code>で包むことはできません。Printable型をShowクラスのインスタンスにするのは簡単で単純に中身を取り出して<code>show</code>を適用すればいいだけですね！</p>
+<h2>高階多相型が必要になる時</h2><p>面白いことが出来るのはわかったけど実際に使いどころはあるのだろうか？ネットの海をさまよっているとstackoverflowでこんな質問を見つけました。<a href="http://stackoverflow.com/questions/7061538/polymorphism-within-higher-order-functions">Polymorphism within higher-order functions?</a>. なるほどこれは高階多相型が役に立っている！この章ではこのstackoverflowの内容を元に高階多相型の使用例を解説したいと思います。</p>
+<pre><code class="language-haskell">data Value = I Int
+           | S String
+           | NoValue
+</code></pre>
+<p>例えば簡単なプログラミング言語を作ろうと思った時など上のように&quot;値&quot;を一括りにするような型が欲しくなったりします。例えばこのValue型を比較するために<code>deriving Eq</code>などでEqクラスのインスタンスにすると</p>
+<pre><code class="language-haskell">I 1       == I 1        -- True
+S &quot;test&quot;  == S &quot;test&quot;   -- True
+I 1       == I 2        -- False
+S &quot;apple&quot; == S &quot;orange&quot; -- False
+</code></pre>
+<p>となりますが</p>
+<pre><code class="language-haskell">I 1      == S &quot;test&quot; -- False
+S &quot;test&quot; == NoValue  -- False
+</code></pre>
+<p>のようにデータ構築子が違う時も<code>False</code>を返してしまい、データ構築子が同じで中身が違うから<code>False</code>なのかそもそもデータ構築子が違うのか見分けがつかなくなってしまいます。</p>
+<p>そこで新しい比較演算子<code>equal :: Value -&gt; Value -&gt; Maybe Bool</code>を用意してデータ構築子がそもそも違うときは<code>Nothing</code>を返して、データ構築子が同じなら中身を比較して<code>Just</code>に包んで返すようにしましょう。</p>
+<pre><code class="language-haskell">equal :: Value -&gt; Value -&gt; Maybe Bool
+equal (I x) (I y) = Just (x == y)
+equal (S x) (S y) = Just (x == y)
+equal _ _ = Nothing
+
+unequal :: Value -&gt; Value -&gt; Maybe Bool
+unequal (I x) (I y) = Just (x == y)
+unequal (S x) (S y) = Just (x == y)
+unequal _ _ = Nothing
+</code></pre>
+<p>ついでに<code>unequal</code>も作りました。でもこれValue型の型構築子が増えるたびにすべての関数の定義を修正するのはあまり嬉しくないですよね。実際の動作は<code>==</code>や<code>/=</code>の部分であとはそれをMaybe型で包んでるだけなのでもう少しうまく書けそうです。なので<code>helper :: (Eq a) =&gt; (a -&gt; a -&gt; Bool) -&gt; Value -&gt; Value -&gt; Maybe Bool</code>のような関数をつかって比較関数を生成できるようにしてやりましょう</p>
+<pre><code class="language-haskell">helper :: (Eq a) =&gt; (a -&gt; a -&gt; Bool) -&gt; Value -&gt; Value -&gt; Maybe Bool
+helper f (I x) (I y) = Just (f x y)
+helper f (S x) (S y) = Just (f x y)
+helper _ _ _ = Nothing
+
+equal :: Value -&gt; Value -&gt; Maybe Bool
+equal = helper (==)
+
+unequal :: Value -&gt; Value -&gt; Maybe Bool
+unequal = helper (/=)
+</code></pre>
+<p>どうです！しかしこれはコンパイルが通りません。</p>
+<pre><code class="language-markup">No instance for (Eq a0) arising from a use of ‘helper’
+The type variable ‘a0’ is ambiguous
+</code></pre>
+<p>と言って怒られてしまいます。それもそのはずで、</p>
+<pre><code class="language-haskell">helper f (I x) (I y) = Just (f x y)
+</code></pre>
+<p>の時<code>f</code>は<code>Int -&gt; Int -&gt; Bool</code>と型付けされ</p>
+<pre><code class="language-haskell">helper f (S x) (S y) = Just (f x y)
+</code></pre>
+<p>の時<code>f</code>は<code>String -&gt; String -&gt; Bool</code>と型付けされるので</p>
+<pre><code class="language-haskell">helper :: (Eq a) =&gt; (a -&gt; a -&gt; Bool) -&gt; Value -&gt; Value -&gt; Maybe Bool
+</code></pre>
+<p>という型では定義の中で<code>a</code>が一貫して同じ型である必要があるのでコンパイルエラーになります。そこで高階多相型の出番です！</p>
+<pre><code class="language-haskell">{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ExistentialQuantification #-}
+
+data Value = I Int
+           | S String
+           | NoValue
+
+helper :: (forall a. Eq a =&gt; a -&gt; a -&gt; Bool) -&gt; Value -&gt; Value -&gt; Maybe Bool
+helper f (I x) (I y) = Just (f x y)
+helper f (S x) (S y) = Just (f x y)
+helper _ _ _ = Nothing
+
+equal :: Value -&gt; Value -&gt; Maybe Bool
+equal = helper (==)
+
+unequal :: Value -&gt; Value -&gt; Maybe Bool
+unequal = helper (/=)
+</code></pre>
+<p>思わず全部のコードを書いてしましました。大事なのは<code>helper</code>の型ですね。</p>
+<pre><code class="language-haskell">helper :: (forall a. Eq a =&gt; a -&gt; a -&gt; Bool) -&gt; Value -&gt; Value -&gt; Maybe Bool
+</code></pre>
+<p>この型だと</p>
+<pre><code class="language-haskell">helper f (I x) (I y) = Just (f x y)
+helper f (S x) (S y) = Just (f x y)
+</code></pre>
+<p>の定義で<code>f</code>の型は<code>Eq a =&gt; a -&gt; a -&gt; Bool</code>と型付けされます。これは<code>==</code>や<code>/=</code>の型そのものですね！なので制約を受けること無く使うことができるのです。</p>
+<p>以上2つの例を通して高階多相型を見てきました。これはとても便利そうですね。自分もまだ学び始めたところなのでまだまだ面白い使い方を知ってるよとかいや高階多相型はそうじゃないんだと教えてくださる方がいらしたら是非教えてください！</p><a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+</script><div id="fb-root"></div><script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38246049-16', 'auto');
+ga('send', 'pageview');</script></body></html>
