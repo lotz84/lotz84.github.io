@@ -2,6 +2,10 @@
     "index": {
         "layout": "../_layout.jade"
     },
+    "unity-hands-on-session-at-camphor": {
+        "title": "Unityハンズオン勉強会に参加しました@CAMPHOR-",
+        "date": "2015/04/25"
+    },
     "playing-in-the-higher-order-polymorphic-type": {
         "title": "高階多相型で遊んでみる",
         "date": "2015/04/15"
