@@ -2,6 +2,10 @@
     "index": {
         "layout": "../_layout.jade"
     },
+    "treat-ctrl-c-in-haskell": {
+        "title": "HaskellでCtrl-Cを制御する",
+        "date": "2015/04/26"
+    },
     "unity-hands-on-session-at-camphor": {
         "title": "Unityハンズオン勉強会に参加しました@CAMPHOR-",
         "date": "2015/04/25"
