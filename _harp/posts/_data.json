@@ -2,6 +2,10 @@
     "index": {
         "layout": "../_layout.jade"
     },
+    "build-chat-server-on-haskell": {
+        "title": "Haskellでチャットサーバーを建ててみた",
+        "date": "2015/04/27"
+    },
     "treat-ctrl-c-in-haskell": {
         "title": "HaskellでCtrl-Cを制御する",
         "date": "2015/04/26"

@@ -1,0 +1,152 @@
+<!DOCTYPE html><html><head><title>Haskellでチャットサーバーを建ててみた </title><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora"><link rel="stylesheet" href="/css/kube.min.css"><link rel="stylesheet" href="/css/prism.css"><link rel="stylesheet" href="/css/main.css"><script type="text/javascript" src="/js/prism.js"></script></head><body><div class="units-row units-padding"><div class="unit-20 sidemenu"><h1 id="-flip-map-"><a href="/">flip map</a></h1>
+<p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160" alt=""></a></p>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href="/about">About</a></li>
+<li><a href="/posts/">Blog</a></li>
+<li><a href="https://github.com/lotz84">Github</a></li>
+<li><a href="https://twitter.com/lotz84_">Twitter</a></li>
+</ul>
+<script type="text/javascript">var nend_params = {"media":9473,"site":133290,"spot":352659,"type":1,"oriented":1};</script><script type="text/javascript" src="http://js1.nend.net/js/nendAdLoader.js"></script></div><div class="unit-80"><h1>Haskellでチャットサーバーを建ててみた</h1><p>2015/04/27</p><p>今日<a href="https://github.com/trending?l=haskell">GithubのHaskellのトレンド</a>を見ていたら<a href="https://github.com/jaspervdj/websockets">jaspervdj/websockets</a>が上がっていました。ソケット通信といえば<a href="http://socket.io/">Socket.IO</a>な昨今ですがHaskellにも<a href="https://hackage.haskell.org/package/socket-io">socket-io</a>というバインディングが存在します。しかし何度か使おうと思って挑戦したんですがまだまだレベルが低くて使い方がわからず…</p>
+<p>今日見つけたwebsocketは例のコードも短く使いやすそうだったので勉強がてら簡単なチャットを作ってみました。</p>
+<p>まず依存ライブラリをインストールします</p>
+<pre><code class="language-bash">$ cabal install websockets warp wai-websockets
+</code></pre>
+<p>インストールが終わるまでコーヒーでも飲んで待ちましょう☕</p>
+<p>終わったら早速アプリを書いていきます！</p>
+<p><code>chat.hs</code></p>
+<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
+import Control.Monad (forever)
+import Control.Exception (finally)
+import Data.IORef
+import Data.Text (Text)
+import Network.HTTP.Types (hContentType)
+import Network.HTTP.Types.Status (status200)
+import Network.Wai (Application, responseFile)
+import Network.Wai.Handler.WebSockets (websocketsOr)
+
+import qualified Network.Wai.Handler.Warp as Warp
+import qualified Network.WebSockets as WS
+
+type Client = (Int, WS.Connection)
+
+broadcast :: Text -&gt; [Client] -&gt; IO ()
+broadcast msg = mapM_ (flip WS.sendTextData msg) . map snd
+
+addClient :: WS.Connection -&gt; [Client] -&gt; ([Client], Int)
+addClient conn cs = let i = if null cs then 0 else maximum (map fst cs) + 1
+                    in  ((i, conn):cs, i)
+
+removeClient :: Int -&gt; [Client] -&gt; ([Client], ())
+removeClient i cs = (filter (\c -&gt; fst c /= i) cs, ())
+
+chat :: IORef [Client] -&gt; WS.ServerApp
+chat ref pending = do
+    conn &lt;- WS.acceptRequest pending
+    identifier &lt;- atomicModifyIORef ref (addClient conn)
+    flip finally (disconnect identifier) $ forever $ do
+        msg &lt;- WS.receiveData conn
+        conns &lt;- readIORef ref
+        broadcast msg conns
+    where
+    disconnect identifier = atomicModifyIORef ref (removeClient identifier)
+
+app :: Application
+app req respond = respond $ responseFile status200 [(hContentType, &quot;text/html&quot;)] &quot;index.html&quot; Nothing
+
+main :: IO ()
+main = do
+    let port = 3000
+    let setting = Warp.setPort port Warp.defaultSettings
+    putStrLn $ &quot;Your server is listening at http://localhost:&quot; ++ show port ++ &quot;/&quot;
+    ref &lt;- newIORef []
+    Warp.runSettings setting $ websocketsOr WS.defaultConnectionOptions (chat ref) app
+</code></pre>
+<p>ドーン！！と一気に全部のコードを載せましたが少しずつ解説していきますｗ</p>
+<p>まずmain関数ですがdo以降の最初の３行はWebサーバーのポートなど基本設定を行っています。次の<code>ref &lt;- newIORef []</code>は接続してきたユーザーを管理するためのIORefを作っています。<code>ref</code>の型は<code>IORef [Client]</code>です。<code>Client</code>は上の方で</p>
+<pre><code class="language-haskell">type Client = (Int, WS.Connection)
+</code></pre>
+<p>と定義されており、識別子とコネクションの組になっています。</p>
+<pre><code class="language-haskell">Warp.runSettings setting $ websocketsOr WS.defaultConnectionOptions (chat ref) app
+</code></pre>
+<p>でいよいよサーバーを起動しています。<code>websocketsOr :: ConnectionOptions -&gt; ServerApp -&gt; Application -&gt; Application</code>はWebSocketサーバーとWebサーバーを同時に建てる時に使う関数で<code>chat ref</code>がWebSocketサーバー、<code>app</code>がWebサーバーになっています。まず<code>app</code>を見てみましょう。</p>
+<pre><code class="language-haskell">app :: Application
+app req respond = respond $ responseFile status200 [(hContentType, &quot;text/html&quot;)] &quot;index.html&quot; Nothing
+</code></pre>
+<p>これはどんなリクエストが来ても<code>index.html</code>を返すだけのサーバーです。<code>index.html</code>は後で作っていきます。</p>
+<pre><code class="language-haskell">chat :: IORef [Client] -&gt; WS.ServerApp
+chat ref pending = do
+    conn &lt;- WS.acceptRequest pending
+    identifier &lt;- atomicModifyIORef ref (addClient conn)
+    flip finally (disconnect identifier) $ forever $ do
+        msg &lt;- WS.receiveData conn
+        conns &lt;- readIORef ref
+        broadcast msg conns
+    where
+    disconnect identifier = atomicModifyIORef ref (removeClient identifier)
+</code></pre>
+<p>これがチャットサーバーの本体です。<code>acceptRequest :: PendingConnection -&gt; IO Connection</code>はクライアントからの接続を待つ関数で、クライアントが接続してきたら<code>atomicModifyIORef</code>を使って部屋情報のIORefにクライアントを登録しています。</p>
+<pre><code class="language-haskell">addClient :: WS.Connection -&gt; [Client] -&gt; ([Client], Int)
+addClient conn cs = let i = if null cs then 0 else maximum (map fst cs) + 1
+                    in  ((i, conn):cs, i)
+</code></pre>
+<p><code>addClient</code>の実装はこのようになってて、識別子は最大値+1にしています。クライアントを登録したら<code>flip finally (disconnect identifier)</code>でユーザーが離脱した時に終了処理をすることを保証した後に<code>forever</code>を使って受け取ったメッセージをひたすらブロードキャストしています。</p>
+<pre><code class="language-haskell">broadcast :: Text -&gt; [Client] -&gt; IO ()
+broadcast msg = mapM_ (flip WS.sendTextData msg) . map snd
+</code></pre>
+<p>ブロードキャストの関数は全てのクライアントにメッセージを送っているだけです。ユーザー離脱時の処理は</p>
+<pre><code class="language-haskell">removeClient :: Int -&gt; [Client] -&gt; ([Client], ())
+removeClient i cs = (filter (\c -&gt; fst c /= i) cs, ())
+</code></pre>
+<p>この<code>removeClient</code>を<code>atomicModifyIORef</code>で実行しています。</p>
+<p><code>index.html</code></p>
+<pre><code class="language-markup">&lt;!DOCTYPE&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;script src=&quot;//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js&quot;&gt;&lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;form&gt;&lt;input type=&quot;text&quot;/&gt;&lt;/form&gt;
+        &lt;div&gt;&lt;/div&gt;
+        &lt;script&gt;
+            try {
+              var ws = new WebSocket(&#39;ws://localhost:3000/&#39;);
+            } catch (err) {
+              console.error(err);
+            }
+
+            $(&quot;form&quot;).submit(function(){
+                ws.send($(&#39;input&#39;).val());
+                $(&#39;input&#39;).val(&#39;&#39;);
+                return false;
+            });
+
+            ws.onmessage = function (msg) {
+                $(&#39;div&#39;).prepend(msg.data + &#39;&lt;br&gt;&#39;); 
+            }
+        &lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p><code>index.html</code>はこんな感じです。さっそく実行してみましょう。</p>
+<pre><code class="language-bash">$ runhaskell chat.hs
+</code></pre>
+<p><img src="http://i.gyazo.com/502b6c72aea5244fa6764ce8395d096d.png" alt=""></p>
+<p>別々にブラウザを開いてリアルタイムにチャットが出来てることが確認できました！</p>
+<h2>参考にしたサイト</h2><ul>
+<li><a href="http://qiita.com/asukamirai/items/522cc3c07d7d9ad21dfa">Haskellでwebsocketサーバを作る</a></li>
+<li><a href="http://qiita.com/naga3/items/bdf6176537a5ac77a9b5">Node.js + Socket.IO + jQuery で最小構成チャット</a></li>
+</ul><table><tr><td><a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+</script><div id="fb-root"></div><script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div></td><td><script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><ins style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-1606689071691648" data-ad-slot="9741642218" class="adsbygoogle"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></td></tr></table></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38246049-16', 'auto');
+ga('send', 'pageview');</script></body></html>

@@ -10,6 +10,16 @@
     
     
       <item>
+        <title>Haskellでチャットサーバーを建ててみた</title>
+        <description><![CDATA[]]></description>
+        <pubDate>Mon Apr 27 2015 00:00:00 GMT+0900 (JST)</pubDate>
+        <link>http://lotz84.github.io/posts/build-chat-server-on-haskell</link>
+        <guid isPermaLink="true">http://lotz84.github.io/posts/build-chat-server-on-haskell</guid>
+      </item>
+    
+    
+    
+      <item>
         <title>HaskellでCtrl-Cを制御する</title>
         <description><![CDATA[]]></description>
         <pubDate>Sun Apr 26 2015 00:00:00 GMT+0900 (JST)</pubDate>
