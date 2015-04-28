@@ -1,0 +1,105 @@
+<!DOCTYPE html><html><head><title>Haskell+OpenGLでロトカ＝ヴォルテラ方程式を描画してみた </title><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora"><link rel="stylesheet" href="/css/kube.min.css"><link rel="stylesheet" href="/css/prism.css"><link rel="stylesheet" href="/css/main.css"><script type="text/javascript" src="/js/prism.js"></script></head><body><div class="units-row units-padding"><div class="unit-20 sidemenu"><h1 id="-flip-map-"><a href="/">flip map</a></h1>
+<p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160" alt=""></a></p>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href="/about">About</a></li>
+<li><a href="/posts/">Blog</a></li>
+<li><a href="https://github.com/lotz84">Github</a></li>
+<li><a href="https://twitter.com/lotz84_">Twitter</a></li>
+</ul>
+<script type="text/javascript">var nend_params = {"media":9473,"site":133290,"spot":352659,"type":1,"oriented":1};</script><script type="text/javascript" src="http://js1.nend.net/js/nendAdLoader.js"></script></div><div class="unit-80"><h1>Haskell+OpenGLでロトカ＝ヴォルテラ方程式を描画してみた</h1><p>2015/04/29</p><p>先日「ロトカ＝ヴォルテラ方程式知ってる？」と聞かれて人工生命などに熱中していた懐かしい記憶が蘇りました。そう言えば昔はPythonで相図を書いた記憶があったのですが今だったらとHaskellを使ってロトカ＝ヴォルテラ方程式の時間発展を描画してみました。描画にはOpenGLを使いました。</p>
+<p><img src="http://i.gyazo.com/5095d0a1b2e6a73925272fe3944650a4.png" alt=""></p>
+<p>OpenGLを使ってゴニョゴニョするのに<a href="https://hackage.haskell.org/package/GLUT">GLUT</a>を使っています。OpenGL Utility ToolkitのHaskellバインディングです。予めインストールしておきましょう。</p>
+<pre><code class="language-bash">$ cabal install GLUT
+</code></pre>
+<p>ロトカ＝ヴォルテラ方程式は<a href="https://www.wikiwand.com/ja/%E3%83%AD%E3%83%88%E3%82%AB%EF%BC%9D%E3%83%B4%E3%82%A9%E3%83%AB%E3%83%86%E3%83%A9%E3%81%AE%E6%96%B9%E7%A8%8B%E5%BC%8F">wiki</a>のものをそのまま使用しました。あとHaskellでOpenGLを使うときは<code>runhaskell</code>ではなく<code>ghc</code>でちゃんとコンパイルしてから実行しないので気をつけてください。これなんで何でしょう。以下のコードは完全なコードなのでコピペして試すことができます。</p>
+<pre><code class="language-haskell">import Data.IORef
+import Graphics.UI.GLUT
+
+type Line = [(GLfloat, GLfloat)]
+
+-- 計算用パラメータ
+dt    = 0.01
+alpha = 5.0
+beta  = 3.0
+gamma = 2.0
+delta = 2.0
+
+start = (1.0, 1.0)
+
+main :: IO ()
+main = do
+    (_progName, _args) &lt;- getArgsAndInitialize
+    initialDisplayMode $= [DoubleBuffered]
+    _window &lt;- createWindow &quot;Lotka-Volterra Equation&quot;
+    orbit &lt;- newIORef [start]
+    idleCallback $= Just (idle orbit)
+    displayCallback $= display orbit
+    mainLoop
+
+idle :: IORef Line -&gt; IdleCallback
+idle orbit = do
+    ps &lt;- get orbit
+    let (x, y) = head ps
+    let nx = (\x&#39; -&gt; x + x&#39; * dt) $ x * (alpha - beta * y)
+    let ny = (\y&#39; -&gt; y + y&#39; * dt) $ (negate y) * (gamma - delta * x)
+    orbit $= ((nx, ny) : take 500 ps)
+    postRedisplay Nothing
+
+display :: IORef Line -&gt; DisplayCallback
+display orbit = do 
+    clear [ColorBuffer]
+    ps &lt;- get orbit
+    let scale = 0.5
+    let (ox, oy) = (1.2, 2.1)
+    renderPrimitive Lines $
+        mapM_ (\(x, y) -&gt; vertex $ Vertex3 ((x - ox) * scale) ((y - oy) * scale) 0) ps
+    swapBuffers
+</code></pre>
+<p>簡単に解説していきます。</p>
+<pre><code class="language-haskell">main :: IO ()
+main = do
+    (_progName, _args) &lt;- getArgsAndInitialize
+    initialDisplayMode $= [DoubleBuffered]
+    _window &lt;- createWindow &quot;Lotka-Volterra Equation&quot;
+    orbit &lt;- newIORef [start]
+    idleCallback $= Just (idle orbit)
+    displayCallback $= display orbit
+    mainLoop
+</code></pre>
+<p>最初の方はほとんどお決まりの処理です。大事なのは<code>idleCallback</code>と<code>displayCallback</code>でそれぞれ待機時、描画時に呼ばれる関数を指定します。まず待機時に呼ばれる関数を見て行きましょう。</p>
+<pre><code class="language-haskell">idle :: IORef Line -&gt; IdleCallback
+idle orbit = do
+    ps &lt;- get orbit
+    let (x, y) = head ps
+    let nx = (\x&#39; -&gt; x + x&#39; * dt) $ x * (alpha - beta * y)
+    let ny = (\y&#39; -&gt; y + y&#39; * dt) $ (negate y) * (gamma - delta * x)
+    orbit $= ((nx, ny) : take 500 ps)
+    postRedisplay Nothing
+</code></pre>
+<p>この関数は毎フレーム呼ばれるのでここでロトカ＝ヴォルテラ方程式の計算をしています。orbitというIORefを用意してここに計算した軌道を貯めていっています。<code>postRedisplay</code>を呼ぶと<code>displayCallback</code>が実行されます。</p>
+<pre><code class="language-haskell">display :: IORef Line -&gt; DisplayCallback
+display orbit = do 
+    clear [ColorBuffer]
+    ps &lt;- get orbit
+    let scale = 0.5
+    let (ox, oy) = (1.2, 2.1)
+    renderPrimitive Lines $
+        mapM_ (\(x, y) -&gt; vertex $ Vertex3 ((x - ox) * scale) ((y - oy) * scale) 0) ps
+    swapBuffers
+</code></pre>
+<p>ここではorbitの軌道を実際に描画しています。実は<code>main</code>でDisplayModeにDoubleBufferedを指定していたのでダブルバッファリングを使うことができます。この場合<code>swapBuffers</code>を呼べばバッファの内容が描画されます。</p>
+<p>だいたいこんな感じです。何も難しいことはしていません。実際に実行すると軌道がぐるぐる動くのが見れて楽しいと思います。発散するのは計算誤差からでしょうか・・・</p><table><tr><td><a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+</script><div id="fb-root"></div><script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div></td><td><script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><ins style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-1606689071691648" data-ad-slot="9741642218" class="adsbygoogle"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></td></tr></table></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38246049-16', 'auto');
+ga('send', 'pageview');</script></body></html>

@@ -10,6 +10,16 @@
     
     
       <item>
+        <title>Haskell+OpenGLでロトカ＝ヴォルテラ方程式を描画してみた</title>
+        <description><![CDATA[]]></description>
+        <pubDate>Wed Apr 29 2015 00:00:00 GMT+0900 (JST)</pubDate>
+        <link>http://lotz84.github.io/posts/draw-lotka-volterra-equation-using-haskell-and-opengl</link>
+        <guid isPermaLink="true">http://lotz84.github.io/posts/draw-lotka-volterra-equation-using-haskell-and-opengl</guid>
+      </item>
+    
+    
+    
+      <item>
         <title>Haskellでチャットサーバーを建ててみた</title>
         <description><![CDATA[]]></description>
         <pubDate>Mon Apr 27 2015 00:00:00 GMT+0900 (JST)</pubDate>
