@@ -1,4 +1,4 @@
-友達にどうせならアトラクタを持ってる方程式を書けと言われたので前回に引き続き今度は[ローレンツ方程式](https://www.wikiwand.com/ja/%E3%83%AD%E3%83%BC%E3%83%AC%E3%83%B3%E3%83%84%E6%96%B9%E7%A8%8B%E5%BC%8F)を描画してみることにしました。
+[前回の記事](http://lotz84.github.io/posts/draw-lotka-volterra-equation-using-haskell-and-opengl)を公開したところ、友達にどうせならアトラクタを持ってる方程式を書けと言われたので前回に引き続き今度は[ローレンツ方程式](https://www.wikiwand.com/ja/%E3%83%AD%E3%83%BC%E3%83%AC%E3%83%B3%E3%83%84%E6%96%B9%E7%A8%8B%E5%BC%8F)を描画してみることにしました。
 
 ![](http://i.gyazo.com/c0db8f56853d3358d1cc6c15b629a819.png)
 
