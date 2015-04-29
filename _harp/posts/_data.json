@@ -2,6 +2,10 @@
     "index": {
         "layout": "../_layout.jade"
     },
+    "draw-lorenz-attractor-haskell-and-opengl": {
+        "title": "Haskell+OpenGLでローレンツアトラクタを描画してみた",
+        "date": "2015/04/29"
+    },
     "draw-lotka-volterra-equation-using-haskell-and-opengl": {
         "title": "Haskell+OpenGLでロトカ＝ヴォルテラ方程式を描画してみた",
         "date": "2015/04/29"
