@@ -2,6 +2,10 @@
     "index": {
         "layout": "../_layout.jade"
     },
+    "published_haskell_by_example": {
+        "title": "Haskell by Exampleを公開しました",
+        "date": "2015/05/06"
+    },
     "draw-lorenz-attractor-haskell-and-opengl": {
         "title": "Haskell+OpenGLでローレンツアトラクタを描画してみた",
         "date": "2015/04/29"
