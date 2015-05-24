@@ -2,6 +2,10 @@
     "index": {
         "layout": "../_layout.jade"
     },
+    "use-lucid-as-html-template": {
+        "title": "HTMLテンプレート？Lucidを使ってみた",
+        "date": "2015/05/23"
+    },
     "published_haskell_by_example": {
         "title": "Haskell by Exampleを公開しました",
         "date": "2015/05/06"
