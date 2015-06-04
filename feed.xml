@@ -10,6 +10,16 @@
     
     
       <item>
+        <title>Mac で mysql-simple を cabal install するときにハマった</title>
+        <description><![CDATA[]]></description>
+        <pubDate>Fri Jun 05 2015 00:00:00 GMT+0900 (JST)</pubDate>
+        <link>http://lotz84.github.io/posts/trapped-when-i-cabal-install-mysql-simple-in-mac</link>
+        <guid isPermaLink="true">http://lotz84.github.io/posts/trapped-when-i-cabal-install-mysql-simple-in-mac</guid>
+      </item>
+    
+    
+    
+      <item>
         <title>HTMLテンプレート？Lucidを使ってみた</title>
         <description><![CDATA[]]></description>
         <pubDate>Sat May 23 2015 00:00:00 GMT+0900 (JST)</pubDate>

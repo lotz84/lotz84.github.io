@@ -2,6 +2,10 @@
     "index": {
         "layout": "../_layout.jade"
     },
+    "trapped-when-i-cabal-install-mysql-simple-in-mac": {
+        "title": "Mac で mysql-simple を cabal install するときにハマった",
+        "date": "2015/06/05"
+    },
     "use-lucid-as-html-template": {
         "title": "HTMLテンプレート？Lucidを使ってみた",
         "date": "2015/05/23"
