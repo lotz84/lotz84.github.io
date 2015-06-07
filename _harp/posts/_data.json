@@ -2,6 +2,10 @@
     "index": {
         "layout": "../_layout.jade"
     },
+    "a-story-of-typing-web-api": {
+        "title": "Web API に型を付ける話",
+        "date": "2015/06/07"
+    },
     "trapped-when-i-cabal-install-mysql-simple-in-mac": {
         "title": "Mac で mysql-simple を cabal install するときにハマった",
         "date": "2015/06/05"
