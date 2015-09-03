@@ -1,13 +1,43 @@
-<!DOCTYPE html><html><head><title>HTMLテンプレート？Lucidを使ってみた </title><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora"><link rel="stylesheet" href="/css/kube.min.css"><link rel="stylesheet" href="/css/prism.css"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/octicons.css"><script type="text/javascript" src="/js/prism.js"></script></head><body><div class="units-row units-padding"><div class="unit-20 sidemenu"><h1><a href="/">flip map <img src="/samurai.png" style="margin:-15px 0 0 -30px;width:60px"></a></h1><p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160"></a></p><h2>Index</h2><ul><li><a href="/about"><span class="octicon octicon-person"></span> About</a></li><li><a href="/posts/"><span class="octicon octicon-file-text"></span> Blog</a></li><li><a href="https://github.com/lotz84" target="blank_"><span class="octicon octicon-mark-github"></span> Github</a></li><li><a href="https://twitter.com/lotz84_" target="blank_"><span class="octicon octicon-mention"></span> Twitter</a></li><li><a href="/feed.xml" target="blank_"><span class="octicon octicon-rss"></span> RSS</a></li></ul><script type="text/javascript">var nend_params = {"media":9473,"site":133290,"spot":352659,"type":1,"oriented":1};</script><script type="text/javascript" src="http://js1.nend.net/js/nendAdLoader.js"></script></div><div class="unit-80"><h1>HTMLテンプレート？Lucidを使ってみた</h1><p>2015/05/23</p><p>みなさんHTMLテンプレートエンジンは使っていますか？ 
-<a href="http://freemarker.org/">FreeMarker</a>, <a href="http://haml.info/">Haml</a>, <a href="http://slim-lang.com/">Slim</a>, <a href="http://jade-lang.com/">Jade</a>, <a href="http://jinja.pocoo.org/docs/dev/">Jinja2</a>, <a href="https://hackage.haskell.org/package/shakespeare">Hamlet</a> などなど世の中には言語やWAFに合わせていろんなテンプレートエンジンが存在しますよね…</p>
-<p><img src="http://i.gyazo.com/01402ecefe6c8b85e532aeeab02841a9.png" alt=""></p>
-<p>自分はJadeが好きでnode.jsでアプリを作った時は必ず使っています。
-どのテンプレートエンジンも同じですがいくら文法を元の言語に似せていると言ってもベースはHTMLなのでどうしても独自の記法を使わざるを得ません。
-あれ、こういう時Jadeでどう書くんだっけ？と疑問に思ったらどんなにJavaScriptに詳しくてもJadeのドキュメントを引っ張ってこないといけません。</p>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>HTMLテンプレート？Lucidを使ってみた</title>
+        <meta name="viewport" content="width=device-width" />
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora" />
+        <link rel="stylesheet" href="../css/kube.min.css" />
+        <link rel="stylesheet" href="../css/prism.css" />
+        <link rel="stylesheet" href="../css/main.css" />
+        <link rel="stylesheet" href="../font/octicons.css" />
+        <script type="text/javascript" src="../js/prism.js"></script>
+    </head>
+    <body>
+        <div class="units-row units-padding">
+            <div class="unit-20 sidemenu">
+                <h1><a href="../">flip map <img src="../img/samurai.png" style="margin:-15px 0 0 -30px;width:60px"></a></h1>
+                <p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160"></a></p>
+                <h2>Index</h2>
+                <ul>
+                    <li><a href="../about"><span class="octicon octicon-person"></span> About</a></li>
+                    <li><a href="../posts"><span class="octicon octicon-file-text"></span> Blog</a></li>
+                    <li><a href="https://github.com/lotz84" target="blank_"><span class="octicon octicon-mark-github"></span> Github</a></li>
+                    <li><a href="https://twitter.com/lotz84_" target="blank_"><span class="octicon octicon-mention"></span> Twitter</a></li>
+                    <li><a href="../feed.xml" target="blank_"><span class="octicon octicon-rss"></span> RSS</a></li>
+                </ul>
+            </div>
+            <div class="unit-80">
+                <h1>HTMLテンプレート？Lucidを使ってみた</h1>
+<p>2015/05/23</p>
+<p>みなさんHTMLテンプレートエンジンは使っていますか？ <a href="http://freemarker.org/">FreeMarker</a>, <a href="http://haml.info/">Haml</a>, <a href="http://slim-lang.com/">Slim</a>, <a href="http://jade-lang.com/">Jade</a>, <a href="http://jinja.pocoo.org/docs/dev/">Jinja2</a>, <a href="https://hackage.haskell.org/package/shakespeare">Hamlet</a> などなど世の中には言語やWAFに合わせていろんなテンプレートエンジンが存在しますよね…</p>
+<div class="figure">
+<img src="http://i.gyazo.com/01402ecefe6c8b85e532aeeab02841a9.png" alt />
+
+</div>
+<p>自分はJadeが好きでnode.jsでアプリを作った時は必ず使っています。 どのテンプレートエンジンも同じですがいくら文法を元の言語に似せていると言ってもベースはHTMLなのでどうしても独自の記法を使わざるを得ません。 あれ、こういう時Jadeでどう書くんだっけ？と疑問に思ったらどんなにJavaScriptに詳しくてもJadeのドキュメントを引っ張ってこないといけません。</p>
 <p>HaskellのHTMLテンプレートエンジンはHamletがたぶん有名だと思うんですが、これにも同じ問題があります。<strong>もう新しくテンプレートエンジンの独自記法は覚えたくないんです！！</strong></p>
 <p>そんなことを考えながらネットの海を彷徨っていると<a href="https://hackage.haskell.org/package/lucid">Lucid</a>というHackageを見つけました。例えばeRubyはHTMLにRubyを埋め込みますが、これは発想が逆でHaskellの中でHTMLを作ってしまいます！何のことはなくてモナドで作ったHTML構築用のEDSLを提供してくれます。もう新しい文法を学ばなくていいんです！EDSL最高！！</p>
 <p>早速ですがどんな感じで書けるのかJadeと比較してみましょう</p>
-<pre><code class="language-markup">doctype
+<pre class="markup"><code>doctype
 html
     head
         title Hello Jade!
@@ -15,95 +45,105 @@ html
     body
         h1 Jade Template Engine
         p Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-        script(src=&quot;/js/main.js&quot;)
-</code></pre>
-<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
+        script(src=&quot;/js/main.js&quot;)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
 
-import Lucid
-import Data.Text
+<span class="kw">import </span><span class="dt">Lucid</span>
+<span class="kw">import </span><span class="dt">Data.Text</span>
 
-indexHtml :: Html ()
-indexHtml = do
-    -- ここからJadeと対応する
+<span class="ot">indexHtml ::</span> <span class="dt">Html</span> ()
+indexHtml <span class="fu">=</span> <span class="kw">do</span>
+    <span class="co">-- ここからJadeと対応する</span>
     doctype_
-    html_ $ do
-        head_ $ do
-            title_ [] &quot;Hello Lucid!&quot;
-            link_  [rel_ &quot;stylesheet&quot;, type_ &quot;text/css&quot;, href_ &quot;/css/main.css&quot;]
-        body_ $ do
-            h1_ [] &quot;Lucid&quot;
-            p_  [] &quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit,&quot;
-            script_ [src_ &quot;/js/main.js&quot;] empty
-    -- ここまで
-</code></pre>
+    html_ <span class="fu">$</span> <span class="kw">do</span>
+        head_ <span class="fu">$</span> <span class="kw">do</span>
+            title_ [] <span class="st">&quot;Hello Lucid!&quot;</span>
+            link_  [rel_ <span class="st">&quot;stylesheet&quot;</span>, type_ <span class="st">&quot;text/css&quot;</span>, href_ <span class="st">&quot;/css/main.css&quot;</span>]
+        body_ <span class="fu">$</span> <span class="kw">do</span>
+            h1_ [] <span class="st">&quot;Lucid&quot;</span>
+            p_  [] <span class="st">&quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit,&quot;</span>
+            script_ [src_ <span class="st">&quot;/js/main.js&quot;</span>] empty
+    <span class="co">-- ここまで</span></code></pre></div>
 <p>どうですか？importや型宣言がある分Haskellの方が少し長くなっていますが、Haskellに慣れてさえいればJadeとさほど変わらない可読性があるはずです。むしろそれ以上かもしれません！例えばbodyの中身以外をテンプレートとして使いまわせるようにしましょう。Jadeの場合はどうしますか？Jadeの場合はextendsとblockを使って実現しますね。具体的な使い方は<a href="http://jade-lang.com/reference/inheritance/">ドキュメント</a>を追ってくださいｗではHaskellの場合はどうするでしょうか。ただ関数として切り出せば良いんです！やり方はHaskellさえ知っていればとても簡単でしょう。</p>
-<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
 
-import Lucid
-import Data.Text
+<span class="kw">import </span><span class="dt">Lucid</span>
+<span class="kw">import </span><span class="dt">Data.Text</span>
 
-indexHtml :: Html ()
-indexHtml = layoutHtml $ do
-    h1_ [] &quot;Lucid&quot;
-    p_  [] &quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit,&quot;
-    script_ [src_ &quot;/js/main.js&quot;] empty
+<span class="ot">indexHtml ::</span> <span class="dt">Html</span> ()
+indexHtml <span class="fu">=</span> layoutHtml <span class="fu">$</span> <span class="kw">do</span>
+    h1_ [] <span class="st">&quot;Lucid&quot;</span>
+    p_  [] <span class="st">&quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit,&quot;</span>
+    script_ [src_ <span class="st">&quot;/js/main.js&quot;</span>] empty
 
-layoutHtml :: Html () -&gt; Html ()
-layoutHtml content = do
+<span class="ot">layoutHtml ::</span> <span class="dt">Html</span> () <span class="ot">-&gt;</span> <span class="dt">Html</span> ()
+layoutHtml content <span class="fu">=</span> <span class="kw">do</span>
     doctype_
-    html_ $ do
-        head_ $ do
-            title_ [] &quot;Hello Lucid!&quot;
-            link_  [rel_ &quot;stylesheet&quot;, type_ &quot;text/css&quot;, href_ &quot;/css/main.css&quot;]
-        body_ content
-</code></pre>
+    html_ <span class="fu">$</span> <span class="kw">do</span>
+        head_ <span class="fu">$</span> <span class="kw">do</span>
+            title_ [] <span class="st">&quot;Hello Lucid!&quot;</span>
+            link_  [rel_ <span class="st">&quot;stylesheet&quot;</span>, type_ <span class="st">&quot;text/css&quot;</span>, href_ <span class="st">&quot;/css/main.css&quot;</span>]
+        body_ content</code></pre></div>
 <p>layoutHtml がテンプレートです！普通のHaskellの関数ですね。それではテンプレートに値を渡す方法はわかりますか？if文を書く方法はどうでしょう？コメントの書き方は？リストの中身をイテレートする方法は？？全部Haskellのやり方で出来ます！だってただのEDSLなのですから。</p>
 <p>とはいえLucidもドキュメントを読む必要はあります。どんな関数があるのかとかどういう型クラスが提供されているのかとかです。ただHTMLタグとほとんど一対一に対応した関数が提供されているので探すのに困ることはありません。関数名の後ろにはアンダースコアがついてるので<code>id</code>と<code>id_</code>が衝突することもありません。</p>
 <p>新しい言語で新しくWebアプリを作るたびに新しいHTMLテンプレートの記法を覚えていた今までは何だったのでしょうか。これからはEDSLで頭を切り替えることなくHTMLも作っていけそうです。実はLucid以外にもHTMLを構築するライブラリはいくつかあって一番有名なのがyesodでも使われている<a href="http://hackage.haskell.org/package/blaze-html">blaze-html</a>だと思います。しかしこれは関数名や演算子名がbaseと衝突して修飾子付インポートせざるを得ず使いにくくなってしまう印象があります。その辺の比較とLucidを作った経緯が作者の<a href="http://chrisdone.com/posts/lucid">ブログ記事</a>にあります。</p>
-<p>最後にローカルでサーバーを建ててHTMLを返してくれる簡単なアプリの完全なコードを載せて終わります。<br>ぜひ手元で動かしてみてください！</p>
-<pre><code class="language-bash">$ cabal install wai warp lucid
-</code></pre>
+<p>最後にローカルでサーバーを建ててHTMLを返してくれる簡単なアプリの完全なコードを載せて終わります。<br />
+ぜひ手元で動かしてみてください！</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cabal</span> install wai warp lucid</code></pre></div>
 <p>必要なHackageは上記のとおりです。</p>
-<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
 
-import Lucid
-import Data.Text
+<span class="kw">import </span><span class="dt">Lucid</span>
+<span class="kw">import </span><span class="dt">Data.Text</span>
 
-import Network.Wai
-import Network.Wai.Handler.Warp
-import Network.HTTP.Types
+<span class="kw">import </span><span class="dt">Network.Wai</span>
+<span class="kw">import </span><span class="dt">Network.Wai.Handler.Warp</span>
+<span class="kw">import </span><span class="dt">Network.HTTP.Types</span>
 
-main :: IO ()
-main = do
-    putStrLn &quot;Your server is listening at http://localhost:3000/&quot;
-    run 3000 $ \_ respond -&gt;
-        respond $ responseLBS status200 [] $ renderBS indexHtml
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+    putStrLn <span class="st">&quot;Your server is listening at http://localhost:3000/&quot;</span>
+    run <span class="dv">3000</span> <span class="fu">$</span> \_ respond <span class="ot">-&gt;</span>
+        respond <span class="fu">$</span> responseLBS status200 [] <span class="fu">$</span> renderBS indexHtml
 
-indexHtml :: Html ()
-indexHtml = layoutHtml $ do
-    h1_ [] &quot;Lucid&quot;
-    p_  [] &quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit,&quot;
-    script_ [src_ &quot;/js/main.js&quot;] empty
+<span class="ot">indexHtml ::</span> <span class="dt">Html</span> ()
+indexHtml <span class="fu">=</span> layoutHtml <span class="fu">$</span> <span class="kw">do</span>
+    h1_ [] <span class="st">&quot;Lucid&quot;</span>
+    p_  [] <span class="st">&quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit,&quot;</span>
+    script_ [src_ <span class="st">&quot;/js/main.js&quot;</span>] empty
 
-layoutHtml :: Html () -&gt; Html ()
-layoutHtml content = do
+<span class="ot">layoutHtml ::</span> <span class="dt">Html</span> () <span class="ot">-&gt;</span> <span class="dt">Html</span> ()
+layoutHtml content <span class="fu">=</span> <span class="kw">do</span>
     doctype_
-    html_ $ do
-        head_ $ do
-            title_ [] &quot;Hello Lucid!&quot;
-            link_  [rel_ &quot;stylesheet&quot;, type_ &quot;text/css&quot;, href_ &quot;/css/main.css&quot;]
-        body_ content
-</code></pre><table><tr><td><a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-</script><div id="fb-root"></div><script>(function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div></td><td><script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><ins style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-1606689071691648" data-ad-slot="9741642218" class="adsbygoogle"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></td></tr></table></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    html_ <span class="fu">$</span> <span class="kw">do</span>
+        head_ <span class="fu">$</span> <span class="kw">do</span>
+            title_ [] <span class="st">&quot;Hello Lucid!&quot;</span>
+            link_  [rel_ <span class="st">&quot;stylesheet&quot;</span>, type_ <span class="st">&quot;text/css&quot;</span>, href_ <span class="st">&quot;/css/main.css&quot;</span>]
+        body_ content</code></pre></div>
+<div>
+    <a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div>
+</div>
 
-ga('create', 'UA-38246049-16', 'auto');
-ga('send', 'pageview');</script></body></html>
+            </div>
+        </div>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-38246049-16', 'auto');
+            ga('send', 'pageview');
+        </script>
+    </body>
+</html>

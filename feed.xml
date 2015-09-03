@@ -1,181 +1,93 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>flip map</title>
-    <link>http://lotz84.github.io</link>
-    <description>lots blog</description>
-    <atom:link href="http://lotz84.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    
-    
-    
-    
-      <item>
-        <title>Web API に型を付ける話</title>
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>flip map: latest posts</title>
+        <link>http://lotz84.github.io/posts/</link>
         <description><![CDATA[]]></description>
-        <pubDate>Sun Jun 07 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/a-story-of-typing-web-api</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/a-story-of-typing-web-api</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>Mac で mysql-simple を cabal install するときにハマった</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Fri Jun 05 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/trapped-when-i-cabal-install-mysql-simple-in-mac</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/trapped-when-i-cabal-install-mysql-simple-in-mac</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>HTMLテンプレート？Lucidを使ってみた</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Sat May 23 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/use-lucid-as-html-template</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/use-lucid-as-html-template</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>Haskell by Exampleを公開しました</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Wed May 06 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/published_haskell_by_example</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/published_haskell_by_example</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>Haskell+OpenGLでローレンツアトラクタを描画してみた</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Wed Apr 29 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/draw-lorenz-attractor-haskell-and-opengl</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/draw-lorenz-attractor-haskell-and-opengl</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>Haskell+OpenGLでロトカ＝ヴォルテラ方程式を描画してみた</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Wed Apr 29 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/draw-lotka-volterra-equation-using-haskell-and-opengl</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/draw-lotka-volterra-equation-using-haskell-and-opengl</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>Haskellでチャットサーバーを建ててみた</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Mon Apr 27 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/build-chat-server-on-haskell</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/build-chat-server-on-haskell</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>HaskellでCtrl-Cを制御する</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Sun Apr 26 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/treat-ctrl-c-in-haskell</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/treat-ctrl-c-in-haskell</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>Unityハンズオン勉強会に参加しました@CAMPHOR-</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Sat Apr 25 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/unity-hands-on-session-at-camphor</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/unity-hands-on-session-at-camphor</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>高階多相型で遊んでみる</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Wed Apr 15 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/playing-in-the-higher-order-polymorphic-type</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/playing-in-the-higher-order-polymorphic-type</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>Haskellを書いてるプログラマーはザコなのか</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Mon Apr 13 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/whether-the-programmer-is-a-zako-of-writing-the-haskell</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/whether-the-programmer-is-a-zako-of-writing-the-haskell</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>Haskellで簡単に乱数を使ってみる</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Wed Apr 08 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/use-random-easily-in-haskell</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/use-random-easily-in-haskell</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>レンズは余状態余モナドの余代数だった</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Sat Apr 04 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/lenses-are-the-coalgebras-for-the-costate-comonad</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/lenses-are-the-coalgebras-for-the-costate-comonad</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>Parsecで計算機を書いてみた</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Tue Feb 10 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/write-calculator-using-parsec</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/write-calculator-using-parsec</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>Swift で分割コンパイルする方法</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Sat Feb 07 2015 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/the-way-of-separate-compilation-in-swift</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/the-way-of-separate-compilation-in-swift</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>HaskellでSeleniumを使ってみる＠勉強会</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Sun Dec 14 2014 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/use-selenium-by-haskell</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/use-selenium-by-haskell</guid>
-      </item>
-    
-    
-    
-      <item>
-        <title>Haskell から MySQL を使う</title>
-        <description><![CDATA[]]></description>
-        <pubDate>Mon Dec 01 2014 00:00:00 GMT+0900 (JST)</pubDate>
-        <link>http://lotz84.github.io/posts/use-mysql-from-haskell</link>
-        <guid isPermaLink="true">http://lotz84.github.io/posts/use-mysql-from-haskell</guid>
-      </item>
-    
-  </channel>
+        <atom:link href="http://lotz84.github.io/posts//feed.xml" rel="self"
+                   type="application/rss+xml" />
+        <lastBuildDate>Sun, 07 Jun 2015 00:00:00 UT</lastBuildDate>
+        <item>
+    <title>Web API に型を付ける話</title>
+    <link>http://lotz84.github.io/posts//posts/a-story-of-typing-web-api.html</link>
+    <description><![CDATA[]]></description>
+    <pubDate>Sun, 07 Jun 2015 00:00:00 UT</pubDate>
+    <guid>http://lotz84.github.io/posts//posts/a-story-of-typing-web-api.html</guid>
+    <dc:creator>Tatsuya Hirose</dc:creator>
+</item>
+<item>
+    <title>Mac で mysql-simple を cabal install するときにハマった</title>
+    <link>http://lotz84.github.io/posts//posts/trapped-when-i-cabal-install-mysql-simple-in-mac.html</link>
+    <description><![CDATA[]]></description>
+    <pubDate>Fri, 05 Jun 2015 00:00:00 UT</pubDate>
+    <guid>http://lotz84.github.io/posts//posts/trapped-when-i-cabal-install-mysql-simple-in-mac.html</guid>
+    <dc:creator>Tatsuya Hirose</dc:creator>
+</item>
+<item>
+    <title>HTMLテンプレート？Lucidを使ってみた</title>
+    <link>http://lotz84.github.io/posts//posts/use-lucid-as-html-template.html</link>
+    <description><![CDATA[]]></description>
+    <pubDate>Sat, 23 May 2015 00:00:00 UT</pubDate>
+    <guid>http://lotz84.github.io/posts//posts/use-lucid-as-html-template.html</guid>
+    <dc:creator>Tatsuya Hirose</dc:creator>
+</item>
+<item>
+    <title>Haskell by Exampleを公開しました</title>
+    <link>http://lotz84.github.io/posts//posts/published_haskell_by_example.html</link>
+    <description><![CDATA[]]></description>
+    <pubDate>Wed, 06 May 2015 00:00:00 UT</pubDate>
+    <guid>http://lotz84.github.io/posts//posts/published_haskell_by_example.html</guid>
+    <dc:creator>Tatsuya Hirose</dc:creator>
+</item>
+<item>
+    <title>Haskell+OpenGLでロトカ＝ヴォルテラ方程式を描画してみた</title>
+    <link>http://lotz84.github.io/posts//posts/draw-lotka-volterra-equation-using-haskell-and-opengl.html</link>
+    <description><![CDATA[]]></description>
+    <pubDate>Wed, 29 Apr 2015 00:00:00 UT</pubDate>
+    <guid>http://lotz84.github.io/posts//posts/draw-lotka-volterra-equation-using-haskell-and-opengl.html</guid>
+    <dc:creator>Tatsuya Hirose</dc:creator>
+</item>
+<item>
+    <title>Haskell+OpenGLでローレンツアトラクタを描画してみた</title>
+    <link>http://lotz84.github.io/posts//posts/draw-lorenz-attractor-haskell-and-opengl.html</link>
+    <description><![CDATA[]]></description>
+    <pubDate>Wed, 29 Apr 2015 00:00:00 UT</pubDate>
+    <guid>http://lotz84.github.io/posts//posts/draw-lorenz-attractor-haskell-and-opengl.html</guid>
+    <dc:creator>Tatsuya Hirose</dc:creator>
+</item>
+<item>
+    <title>Haskellでチャットサーバーを建ててみた</title>
+    <link>http://lotz84.github.io/posts//posts/build-chat-server-on-haskell.html</link>
+    <description><![CDATA[]]></description>
+    <pubDate>Mon, 27 Apr 2015 00:00:00 UT</pubDate>
+    <guid>http://lotz84.github.io/posts//posts/build-chat-server-on-haskell.html</guid>
+    <dc:creator>Tatsuya Hirose</dc:creator>
+</item>
+<item>
+    <title>HaskellでCtrl-Cを制御する</title>
+    <link>http://lotz84.github.io/posts//posts/treat-ctrl-c-in-haskell.html</link>
+    <description><![CDATA[]]></description>
+    <pubDate>Sun, 26 Apr 2015 00:00:00 UT</pubDate>
+    <guid>http://lotz84.github.io/posts//posts/treat-ctrl-c-in-haskell.html</guid>
+    <dc:creator>Tatsuya Hirose</dc:creator>
+</item>
+<item>
+    <title>Unityハンズオン勉強会に参加しました@CAMPHOR-</title>
+    <link>http://lotz84.github.io/posts//posts/unity-hands-on-session-at-camphor.html</link>
+    <description><![CDATA[]]></description>
+    <pubDate>Sat, 25 Apr 2015 00:00:00 UT</pubDate>
+    <guid>http://lotz84.github.io/posts//posts/unity-hands-on-session-at-camphor.html</guid>
+    <dc:creator>Tatsuya Hirose</dc:creator>
+</item>
+<item>
+    <title>高階多相型で遊んでみる</title>
+    <link>http://lotz84.github.io/posts//posts/playing-in-the-higher-order-polymorphic-type.html</link>
+    <description><![CDATA[]]></description>
+    <pubDate>Wed, 15 Apr 2015 00:00:00 UT</pubDate>
+    <guid>http://lotz84.github.io/posts//posts/playing-in-the-higher-order-polymorphic-type.html</guid>
+    <dc:creator>Tatsuya Hirose</dc:creator>
+</item>
+
+    </channel>
 </rss>

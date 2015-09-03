@@ -1,5 +1,37 @@
-<!DOCTYPE html><html><head><title>Web API に型を付ける話 </title><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora"><link rel="stylesheet" href="/css/kube.min.css"><link rel="stylesheet" href="/css/prism.css"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/octicons.css"><script type="text/javascript" src="/js/prism.js"></script></head><body><div class="units-row units-padding"><div class="unit-20 sidemenu"><h1><a href="/">flip map <img src="/samurai.png" style="margin:-15px 0 0 -30px;width:60px"></a></h1><p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160"></a></p><h2>Index</h2><ul><li><a href="/about"><span class="octicon octicon-person"></span> About</a></li><li><a href="/posts/"><span class="octicon octicon-file-text"></span> Blog</a></li><li><a href="https://github.com/lotz84" target="blank_"><span class="octicon octicon-mark-github"></span> Github</a></li><li><a href="https://twitter.com/lotz84_" target="blank_"><span class="octicon octicon-mention"></span> Twitter</a></li><li><a href="/feed.xml" target="blank_"><span class="octicon octicon-rss"></span> RSS</a></li></ul><script type="text/javascript">var nend_params = {"media":9473,"site":133290,"spot":352659,"type":1,"oriented":1};</script><script type="text/javascript" src="http://js1.nend.net/js/nendAdLoader.js"></script></div><div class="unit-80"><h1>Web API に型を付ける話</h1><p>2015/06/07</p><p>みなさん型付けしていますか？<br>Haskellのような柔軟な型に慣れてくると何でもかんでも型で表現できないと気がすまなくなってきますよね💃</p>
-<p>今日はservantというWeb Application Framework(WAF)を紹介します。<br>特徴として<a href="http://haskell-servant.github.io/tutorial/">チュートリアル</a>では以下の4つが挙げられています</p>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Web API に型を付ける話</title>
+        <meta name="viewport" content="width=device-width" />
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora" />
+        <link rel="stylesheet" href="../css/kube.min.css" />
+        <link rel="stylesheet" href="../css/prism.css" />
+        <link rel="stylesheet" href="../css/main.css" />
+        <link rel="stylesheet" href="../font/octicons.css" />
+        <script type="text/javascript" src="../js/prism.js"></script>
+    </head>
+    <body>
+        <div class="units-row units-padding">
+            <div class="unit-20 sidemenu">
+                <h1><a href="../">flip map <img src="../img/samurai.png" style="margin:-15px 0 0 -30px;width:60px"></a></h1>
+                <p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160"></a></p>
+                <h2>Index</h2>
+                <ul>
+                    <li><a href="../about"><span class="octicon octicon-person"></span> About</a></li>
+                    <li><a href="../posts"><span class="octicon octicon-file-text"></span> Blog</a></li>
+                    <li><a href="https://github.com/lotz84" target="blank_"><span class="octicon octicon-mark-github"></span> Github</a></li>
+                    <li><a href="https://twitter.com/lotz84_" target="blank_"><span class="octicon octicon-mention"></span> Twitter</a></li>
+                    <li><a href="../feed.xml" target="blank_"><span class="octicon octicon-rss"></span> RSS</a></li>
+                </ul>
+            </div>
+            <div class="unit-80">
+                <h1>Web API に型を付ける話</h1>
+<p>2015/06/07</p>
+<p>みなさん型付けしていますか？<br />
+Haskellのような柔軟な型に慣れてくると何でもかんでも型で表現できないと気がすまなくなってきますよね💃</p>
+<p>今日はservantというWeb Application Framework(WAF)を紹介します。<br />
+特徴として<a href="http://haskell-servant.github.io/tutorial/">チュートリアル</a>では以下の4つが挙げられています</p>
 <ul>
 <li>簡潔である</li>
 <li>汎用的・柔軟性がある</li>
@@ -9,19 +41,18 @@
 <p>簡潔に書けたり汎用的であることはWAFであれば当然持っていて欲しい特徴でありますが、<strong>関心の分離</strong>と<strong>型安全である</strong>というのはどういうことでしょうか？</p>
 <p><strong>関心の分離</strong>というのは何と何を分離しているかというと、APIのリクエストとレスポンスに関する処理と内部のロジックを分離しようという話です。例えば一般的なWAFであればリクエストで送られてきたbodyをパースして目当てのデータを作る必要があったり、ヘッダーに含まれるデータを検索して取ってきたり、データをシリアライズしてレスポンスに詰めてやったりする必要がありますが、servantではそういったある意味冗長な部分もWAFが担当してくれるので書く必要がありません。</p>
 <p>なぜそれが可能なのかというと<strong>型安全である</strong>ことに関係しています。servantはそのAPIがどういうものであるのかを型によって記述します。ルーティングはどうなっているのか、どういうパラメータが送られてくるのか、どういうレスポンスが返されるのか、などをすべて型で表現します。例えば以下のようにです。</p>
-<pre><code class="language-haskell">             -- POST /todo/:id
-type TodoAPI = &quot;todo&quot; :&gt; Capture &quot;id&quot; Int :&gt; ReqBody &#39;[JSON] Todo :&gt; Post &#39;[JSON] [Todo]
-</code></pre>
+<pre class="language-haskell"><code>             -- POST /todo/:id
+type TodoAPI = &quot;todo&quot; :&gt; Capture &quot;id&quot; Int :&gt; ReqBody '[JSON] Todo :&gt; Post '[JSON] [Todo]</code></pre>
 <p>コメントは見やすいようにつけているだけです。この型をなんとなく読んでみるとと<code>TodoAPI</code>では<strong>/todo/:id</strong>にPOSTでbodyにJSON形式のTodoを入れてリクエストを送るとJSON形式でTodoのリストが返ってくるという風に読めそうです。Todoは独自に定義したデータ構造です。さらにこのAPIの実装例を見てみましょう。</p>
-<pre><code class="language-haskell">server :: Server TodoAPI
+<pre class="language-haskell"><code>server :: Server TodoAPI
 server = postTodo
     where
-    postTodo targetId todo = return todoList
-</code></pre>
+    postTodo targetId todo = return todoList</code></pre>
 <p>postTodo の型は<code>postTodo :: Int -&gt; Todo -&gt; EitherT ServantErr IO [Todo]</code> のようになっててAPIの一部であることを意識させない普通の関数になっています。戻り値の型は少し複雑ですがServantのエラーハンドリングを無視すればほとんど<code>IO [Todo]</code>に等しいでしょう。このように型に十分な情報を持たせることでリクエストのパースなどの冗長な処理を無くし、今までのWAFには無かったような簡潔な実装を実現しているのです。</p>
-<h2>実際に使ってみる</h2><p>servantの感触を掴んでもらったところで早速具体的なWebサービスを作ってみましょう！今回はよくある簡単なTodoアプリを作っていきます。</p>
+<h2 id="実際に使ってみる">実際に使ってみる</h2>
+<p>servantの感触を掴んでもらったところで早速具体的なWebサービスを作ってみましょう！今回はよくある簡単なTodoアプリを作っていきます。</p>
 <p>まずはTodoのリストを返すAPIを作ってみましょう</p>
-<pre><code class="language-haskell">{-# LANGUAGE DataKinds, TypeOperators, OverloadedStrings #-}
+<pre class="language-haskell"><code>{-# LANGUAGE DataKinds, TypeOperators, OverloadedStrings #-}
 
 import Servant
 import Data.Aeson
@@ -41,7 +72,7 @@ instance ToJSON Todo where
                          ]
 
              -- GET /todo/all
-type TodoAPI = &quot;todo&quot; :&gt; &quot;all&quot; :&gt; Get &#39;[JSON] [Todo]
+type TodoAPI = &quot;todo&quot; :&gt; &quot;all&quot; :&gt; Get '[JSON] [Todo]
 
 todoAPI :: Proxy TodoAPI
 todoAPI = Proxy
@@ -54,19 +85,18 @@ server = todoAll
 main :: IO ()
 main = do
     putStrLn &quot;Listening on port 3000&quot;
-    run 3000 $ serve todoAPI server
-</code></pre>
+    run 3000 $ serve todoAPI server</code></pre>
 <p>まず<code>Todo</code>をレスポンスで返すために<code>ToJSON</code>のインスタンスにしてやる必要があります。そしてservant唯一の冗長な記述なのですが<code>todoAPI</code>のようにProxyのデータを作ってやる必要があります。これがないと<code>serve</code>の時にうまく型をあわせることができません。</p>
-<p>実行して <a href="http://localhost:3000/todo/all">http://localhost:3000/todo/all</a> にアクセスするとTodoのリストがJSON形式で返ってきてるのがわかると思います。</p>
+<p>実行して <a href="http://localhost:3000/todo/all" class="uri">http://localhost:3000/todo/all</a> にアクセスするとTodoのリストがJSON形式で返ってきてるのがわかると思います。</p>
 <p>次にTodoの一覧をWebページにちゃんと表示してみましょう。差分だけ書いていきます</p>
-<pre><code class="language-haskell">import Servant.HTML.Lucid
+<pre class="language-haskell"><code>import Servant.HTML.Lucid
 import Data.Text (empty)
 import Lucid
 
              -- GET /
-type TodoAPI = Get &#39;[HTML] (Html ())
+type TodoAPI = Get '[HTML] (Html ())
              -- GET /todo/all
-          :&lt;|&gt; &quot;todo&quot; :&gt; &quot;all&quot; :&gt; Get &#39;[JSON] [Todo]
+          :&lt;|&gt; &quot;todo&quot; :&gt; &quot;all&quot; :&gt; Get '[JSON] [Todo]
              -- static files /public/*
           :&lt;|&gt; &quot;public&quot; :&gt; Raw
 
@@ -89,18 +119,16 @@ indexHtml = do
             script_ [src_ &quot;//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js&quot;] empty
             script_ [src_ &quot;/public/main.js&quot;] empty
 
--- 以下同じ
-</code></pre>
-<p><code>TodoAPI</code>にエンドポイントが2つ追加されています。複数のエンドポイントを持つAPIは型の定義を<code>:&lt;|&gt;</code>を使って結合していけば大丈夫です。まず<code>Get &#39;[HTML] (Html ())</code>です。これはルート<code>/</code>にアクセスした時になんらかのWebページを返すことを表しています。<code>HTML</code>はservant-lucidのパッケージの中に入っている型です。ここではHTMLをLucidを使って作っています。<code>indexHtml</code>がそれです。</p>
+-- 以下同じ</code></pre>
+<p><code>TodoAPI</code>にエンドポイントが2つ追加されています。複数のエンドポイントを持つAPIは型の定義を<code>:&lt;|&gt;</code>を使って結合していけば大丈夫です。まず<code>Get '[HTML] (Html ())</code>です。これはルート<code>/</code>にアクセスした時になんらかのWebページを返すことを表しています。<code>HTML</code>はservant-lucidのパッケージの中に入っている型です。ここではHTMLをLucidを使って作っています。<code>indexHtml</code>がそれです。</p>
 <p>HTMLの中で<code>/public/main.js</code>にJavaScriptのファイルを読みに行っています。これを配信するために<code>&quot;public&quot; :&gt; Raw</code>という型を使っています。こうすることで<strong>/public/(path)</strong>でアクセスされた時にpathのファイルを直接配信することができます。今のディレクトリ構造は以下のようにしています。</p>
-<pre><code class="language-bash">$ tree .
+<pre class="language-bash"><code>$ tree .
 .
 ├── Main.hs
 └── public
-    └── main.js
-</code></pre>
+    └── main.js</code></pre>
 <p><code>main.js</code>の中身です。</p>
-<pre><code class="language-javascript">var updateTodoList = function(list){
+<pre class="language-javascript"><code>var updateTodoList = function(list){
     $(&quot;#todo-list .todo-item&quot;).remove();
     list.sort(function(a, b){return a.id - b.id;})
     list.forEach(function(todo){
@@ -119,27 +147,26 @@ indexHtml = do
     });
 }
 
-$.get(&quot;/todo/all&quot;, updateTodoList);
-</code></pre>
-<p>実行して <a href="http://localhost:3000/">http://localhost:3000/</a> にアクセスしてみてください。Todoの一覧が表示されているはずです！</p>
+$.get(&quot;/todo/all&quot;, updateTodoList);</code></pre>
+<p>実行して <a href="http://localhost:3000/" class="uri">http://localhost:3000/</a> にアクセスしてみてください。Todoの一覧が表示されているはずです！</p>
 <p>それではTodoを自分で登録できるようにしてみましょう。</p>
-<pre><code class="language-haskell">import Data.Text (empty, unpack)
+<pre class="language-haskell"><code>import Data.Text (empty, unpack)
 import Data.IORef
 import Control.Monad.IO.Class (liftIO)
 
 instance FromFormUrlEncoded Todo where
     fromFormUrlEncoded form = let maybeTodo = do
-                                      let id&#39; = maybe (-1) (read . unpack) $ lookup &quot;id&quot; form
+                                      let id' = maybe (-1) (read . unpack) $ lookup &quot;id&quot; form
                                       let done   = maybe False (==&quot;on&quot;) $ lookup &quot;done&quot; form
                                       title &lt;- lookup &quot;title&quot; form
-                                      return $ Todo id&#39; done (unpack title)
+                                      return $ Todo id' done (unpack title)
                               in  maybe (Left &quot;Todo parse error from Form&quot;) Right maybeTodo
              -- GET /
-type TodoAPI = Get &#39;[HTML] (Html ())
+type TodoAPI = Get '[HTML] (Html ())
              -- GET /todo/all
-          :&lt;|&gt; &quot;todo&quot; :&gt; &quot;all&quot; :&gt; Get &#39;[JSON] [Todo]
+          :&lt;|&gt; &quot;todo&quot; :&gt; &quot;all&quot; :&gt; Get '[JSON] [Todo]
              -- POST /todo
-          :&lt;|&gt; &quot;todo&quot; :&gt; ReqBody &#39;[FormUrlEncoded] Todo :&gt; Post &#39;[JSON] [Todo]
+          :&lt;|&gt; &quot;todo&quot; :&gt; ReqBody '[FormUrlEncoded] Todo :&gt; Post '[JSON] [Todo]
              -- static files /public/*
           :&lt;|&gt; &quot;public&quot; :&gt; Raw
 
@@ -156,9 +183,9 @@ server todosRef = index
         let nextId = if null todos
                          then 1
                          else (+1) . maximum . fmap todoId $ todos
-        let todos&#39; = todo {todoId = nextId} : todos
-        liftIO $ writeIORef todosRef todos&#39;
-        return todos&#39;
+        let todos' = todo {todoId = nextId} : todos
+        liftIO $ writeIORef todosRef todos'
+        return todos'
 
 main :: IO ()
 main = do
@@ -180,34 +207,46 @@ indexHtml = do
             script_ [src_ &quot;//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js&quot;] empty
             script_ [src_ &quot;/public/main.js&quot;] empty
 
--- 以下同じ
-</code></pre>
+-- 以下同じ</code></pre>
 <p>FormでTodoを送信するので<code>FromFormUrlEncoded</code>のインスタンスにしています。登録されたTodoはIORefで管理していて<code>todoAll</code>はその中身を返すように修正しました。</p>
-<pre><code class="language-javascript">$(&quot;#todo-form&quot;).on(&quot;submit&quot;, function(e){
+<pre class="language-javascript"><code>$(&quot;#todo-form&quot;).on(&quot;submit&quot;, function(e){
     e.preventDefault();
     var $form = $(this);
     $.ajax({
-        url: $form.attr(&#39;action&#39;),
-        type: $form.attr(&#39;method&#39;),
+        url: $form.attr('action'),
+        type: $form.attr('method'),
         data: $form.serialize()
     })
     .then(updateTodoList);
 });
 
--- 以下同じ
-</code></pre>
+-- 以下同じ</code></pre>
 <p>これで実行すると自分でTodoをどんどん追加することが出来るはずです！</p>
-<p>あとはTodoの状態をあとから変更できるようにしたり、Todoを削除したりできるようにしたいですね。それらを実装したものを<a href="https://github.com/lotz84/servant-todo-example">lotz84/servant-todo-example</a>に置いておきましたので是非cloneしてさわってみてください。</p><table><tr><td><a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-</script><div id="fb-root"></div><script>(function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div></td><td><script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><ins style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-1606689071691648" data-ad-slot="9741642218" class="adsbygoogle"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></td></tr></table></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<p>あとはTodoの状態をあとから変更できるようにしたり、Todoを削除したりできるようにしたいですね。それらを実装したものを<a href="https://github.com/lotz84/servant-todo-example">lotz84/servant-todo-example</a>に置いておきましたので是非cloneしてさわってみてください。</p>
+<div>
+    <a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div>
+</div>
 
-ga('create', 'UA-38246049-16', 'auto');
-ga('send', 'pageview');</script></body></html>
+            </div>
+        </div>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-38246049-16', 'auto');
+            ga('send', 'pageview');
+        </script>
+    </body>
+</html>

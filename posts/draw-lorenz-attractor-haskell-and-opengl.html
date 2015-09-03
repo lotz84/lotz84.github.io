@@ -1,177 +1,214 @@
-<!DOCTYPE html><html><head><title>Haskell+OpenGLでローレンツアトラクタを描画してみた </title><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora"><link rel="stylesheet" href="/css/kube.min.css"><link rel="stylesheet" href="/css/prism.css"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/octicons.css"><script type="text/javascript" src="/js/prism.js"></script></head><body><div class="units-row units-padding"><div class="unit-20 sidemenu"><h1><a href="/">flip map <img src="/samurai.png" style="margin:-15px 0 0 -30px;width:60px"></a></h1><p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160"></a></p><h2>Index</h2><ul><li><a href="/about"><span class="octicon octicon-person"></span> About</a></li><li><a href="/posts/"><span class="octicon octicon-file-text"></span> Blog</a></li><li><a href="https://github.com/lotz84" target="blank_"><span class="octicon octicon-mark-github"></span> Github</a></li><li><a href="https://twitter.com/lotz84_" target="blank_"><span class="octicon octicon-mention"></span> Twitter</a></li><li><a href="/feed.xml" target="blank_"><span class="octicon octicon-rss"></span> RSS</a></li></ul><script type="text/javascript">var nend_params = {"media":9473,"site":133290,"spot":352659,"type":1,"oriented":1};</script><script type="text/javascript" src="http://js1.nend.net/js/nendAdLoader.js"></script></div><div class="unit-80"><h1>Haskell+OpenGLでローレンツアトラクタを描画してみた</h1><p>2015/04/29</p><p><a href="http://lotz84.github.io/posts/draw-lotka-volterra-equation-using-haskell-and-opengl">前回の記事</a>を公開したところ、友達にどうせならアトラクタを持ってる方程式を書けと言われたので前回に引き続き今度は<a href="https://www.wikiwand.com/ja/%E3%83%AD%E3%83%BC%E3%83%AC%E3%83%B3%E3%83%84%E6%96%B9%E7%A8%8B%E5%BC%8F">ローレンツ方程式</a>を描画してみることにしました。</p>
-<p><img src="http://i.gyazo.com/c0db8f56853d3358d1cc6c15b629a819.png" alt=""></p>
-<p>今回はWASDでズームと回転が出来るようにしています。</p>
-<pre><code class="language-haskell">import Data.IORef
-import Graphics.UI.GLUT
-</code></pre>
-<p>GLUTが必要なので入っていない場合は</p>
-<pre><code class="language-bash">$ cabal install GLUT
-</code></pre>
-<p>で予めインストールしておいてください☕</p>
-<pre><code class="language-haskell">type Point = (GLfloat, GLfloat, GLfloat)
-type Line  = [Point]
-</code></pre>
-<p>型宣言がごちゃごちゃするのを防ぐために点と線の型を定義しておきます</p>
-<pre><code class="language-haskell">-- 初期値
-start = (1.0, 1.0, 1.0)
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Haskell+OpenGLでローレンツアトラクタを描画してみた</title>
+        <meta name="viewport" content="width=device-width" />
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora" />
+        <link rel="stylesheet" href="../css/kube.min.css" />
+        <link rel="stylesheet" href="../css/prism.css" />
+        <link rel="stylesheet" href="../css/main.css" />
+        <link rel="stylesheet" href="../font/octicons.css" />
+        <script type="text/javascript" src="../js/prism.js"></script>
+    </head>
+    <body>
+        <div class="units-row units-padding">
+            <div class="unit-20 sidemenu">
+                <h1><a href="../">flip map <img src="../img/samurai.png" style="margin:-15px 0 0 -30px;width:60px"></a></h1>
+                <p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160"></a></p>
+                <h2>Index</h2>
+                <ul>
+                    <li><a href="../about"><span class="octicon octicon-person"></span> About</a></li>
+                    <li><a href="../posts"><span class="octicon octicon-file-text"></span> Blog</a></li>
+                    <li><a href="https://github.com/lotz84" target="blank_"><span class="octicon octicon-mark-github"></span> Github</a></li>
+                    <li><a href="https://twitter.com/lotz84_" target="blank_"><span class="octicon octicon-mention"></span> Twitter</a></li>
+                    <li><a href="../feed.xml" target="blank_"><span class="octicon octicon-rss"></span> RSS</a></li>
+                </ul>
+            </div>
+            <div class="unit-80">
+                <h1>Haskell+OpenGLでローレンツアトラクタを描画してみた</h1>
+<p>2015/04/29</p>
+<p><a href="http://lotz84.github.io/posts/draw-lotka-volterra-equation-using-haskell-and-opengl">前回の記事</a>を公開したところ、友達にどうせならアトラクタを持ってる方程式を書けと言われたので前回に引き続き今度は<a href="https://www.wikiwand.com/ja/%E3%83%AD%E3%83%BC%E3%83%AC%E3%83%B3%E3%83%84%E6%96%B9%E7%A8%8B%E5%BC%8F">ローレンツ方程式</a>を描画してみることにしました。</p>
+<div class="figure">
+<img src="http://i.gyazo.com/c0db8f56853d3358d1cc6c15b629a819.png" alt />
 
--- ローレンツ方程式
-lorenz :: Point -&gt; Point
-lorenz = \(x, y, z) -&gt;
-    let dt = 0.01
-        p  = 10.0
-        r  = 28.0
-        b  = 8.0/3.0
-    in  ( (\x&#39; -&gt; x + x&#39; * dt) $ p * (y - x)
-        , (\y&#39; -&gt; y + y&#39; * dt) $ x * (r - z) - y
-        , (\z&#39; -&gt; z + z&#39; * dt) $ x * y - b * z
-        )
-</code></pre>
+</div>
+<p>今回はWASDでズームと回転が出来るようにしています。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.IORef</span>
+<span class="kw">import </span><span class="dt">Graphics.UI.GLUT</span></code></pre></div>
+<p>GLUTが必要なので入っていない場合は</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cabal</span> install GLUT</code></pre></div>
+<p>で予めインストールしておいてください☕</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Point</span> <span class="fu">=</span> (<span class="dt">GLfloat</span>, <span class="dt">GLfloat</span>, <span class="dt">GLfloat</span>)
+<span class="kw">type</span> <span class="dt">Line</span>  <span class="fu">=</span> [<span class="dt">Point</span>]</code></pre></div>
+<p>型宣言がごちゃごちゃするのを防ぐために点と線の型を定義しておきます</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- 初期値</span>
+start <span class="fu">=</span> (<span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>)
+
+<span class="co">-- ローレンツ方程式</span>
+<span class="ot">lorenz ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span>
+lorenz <span class="fu">=</span> \(x, y, z) <span class="ot">-&gt;</span>
+    <span class="kw">let</span> dt <span class="fu">=</span> <span class="fl">0.01</span>
+        p  <span class="fu">=</span> <span class="fl">10.0</span>
+        r  <span class="fu">=</span> <span class="fl">28.0</span>
+        b  <span class="fu">=</span> <span class="fl">8.0</span><span class="fu">/</span><span class="fl">3.0</span>
+    <span class="kw">in</span>  ( (\x' <span class="ot">-&gt;</span> x <span class="fu">+</span> x' <span class="fu">*</span> dt) <span class="fu">$</span> p <span class="fu">*</span> (y <span class="fu">-</span> x)
+        , (\y' <span class="ot">-&gt;</span> y <span class="fu">+</span> y' <span class="fu">*</span> dt) <span class="fu">$</span> x <span class="fu">*</span> (r <span class="fu">-</span> z) <span class="fu">-</span> y
+        , (\z' <span class="ot">-&gt;</span> z <span class="fu">+</span> z' <span class="fu">*</span> dt) <span class="fu">$</span> x <span class="fu">*</span> y <span class="fu">-</span> b <span class="fu">*</span> z
+        )</code></pre></div>
 <p>ローレンツ方程式本体と初期値です。<code>lorenz</code>は点の情報を受け取ると微小時間だけ動いた次の点の情報を返します。微小時間は<code>dt = 0.01</code>と決めで実装してますが引数で取るように修正してもいいでしょう。</p>
-<pre><code class="language-haskell">main :: IO ()
-main = do
-    -- OpenGLの初期化
-    (_progName, _args) &lt;- getArgsAndInitialize
-    initialDisplayMode $= [DoubleBuffered]
-    _window &lt;- createWindow &quot;Lorenz Attractor&quot;
-    -- 共有パラメータの設定
-    rot &lt;- newIORef 0
-    sc  &lt;- newIORef 0.02
-    orbit &lt;- newIORef [start]
-    -- コールバックの設定
-    keyboardMouseCallback $= Just (keyboardMouse rot sc)
-    idleCallback $= Just (idle orbit)
-    displayCallback $= display orbit rot sc
-    -- 実行
-    mainLoop
-</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+    <span class="co">-- OpenGLの初期化</span>
+    (_progName, _args) <span class="ot">&lt;-</span> getArgsAndInitialize
+    initialDisplayMode <span class="fu">$=</span> [<span class="dt">DoubleBuffered</span>]
+    _window <span class="ot">&lt;-</span> createWindow <span class="st">&quot;Lorenz Attractor&quot;</span>
+    <span class="co">-- 共有パラメータの設定</span>
+    rot <span class="ot">&lt;-</span> newIORef <span class="dv">0</span>
+    sc  <span class="ot">&lt;-</span> newIORef <span class="fl">0.02</span>
+    orbit <span class="ot">&lt;-</span> newIORef [start]
+    <span class="co">-- コールバックの設定</span>
+    keyboardMouseCallback <span class="fu">$=</span> <span class="dt">Just</span> (keyboardMouse rot sc)
+    idleCallback <span class="fu">$=</span> <span class="dt">Just</span> (idle orbit)
+    displayCallback <span class="fu">$=</span> display orbit rot sc
+    <span class="co">-- 実行</span>
+    mainLoop</code></pre></div>
 <p>共有パラメータは<code>rot</code>は回転角を<code>sc</code>は拡大率を<code>orbit</code>は計算した軌道を保存しておくのに使います。</p>
-<pre><code class="language-haskell">idle :: IORef Line -&gt; IdleCallback
-idle orbit = do
-    ps &lt;- get orbit
-    orbit $= (lorenz (head ps) : take 10000 ps)
-    postRedisplay Nothing
-</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">idle ::</span> <span class="dt">IORef</span> <span class="dt">Line</span> <span class="ot">-&gt;</span> <span class="dt">IdleCallback</span>
+idle orbit <span class="fu">=</span> <span class="kw">do</span>
+    ps <span class="ot">&lt;-</span> get orbit
+    orbit <span class="fu">$=</span> (lorenz (head ps) <span class="fu">:</span> take <span class="dv">10000</span> ps)
+    postRedisplay <span class="dt">Nothing</span></code></pre></div>
 <p>待機時に実行される関数でローレンツ方程式の計算をしています。計算した値はorbitに保存しています。</p>
-<pre><code class="language-haskell">display :: IORef Line -&gt; IORef GLfloat -&gt; IORef GLfloat -&gt; DisplayCallback
-display orbit rot sc = do 
-    -- バッファをクリア
-    clear [ColorBuffer]
-    -- 共有パラメータの取得
-    r &lt;- get rot
-    s &lt;- get sc
-    ps &lt;- get orbit
-    -- 変換行列の初期化
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">display ::</span> <span class="dt">IORef</span> <span class="dt">Line</span> <span class="ot">-&gt;</span> <span class="dt">IORef</span> <span class="dt">GLfloat</span> <span class="ot">-&gt;</span> <span class="dt">IORef</span> <span class="dt">GLfloat</span> <span class="ot">-&gt;</span> <span class="dt">DisplayCallback</span>
+display orbit rot sc <span class="fu">=</span> <span class="kw">do</span> 
+    <span class="co">-- バッファをクリア</span>
+    clear [<span class="dt">ColorBuffer</span>]
+    <span class="co">-- 共有パラメータの取得</span>
+    r <span class="ot">&lt;-</span> get rot
+    s <span class="ot">&lt;-</span> get sc
+    ps <span class="ot">&lt;-</span> get orbit
+    <span class="co">-- 変換行列の初期化</span>
     loadIdentity
-    preservingMatrix $ do
+    preservingMatrix <span class="fu">$</span> <span class="kw">do</span>
         scale s s s
-        rotate r $ Vector3 0 1 0
-        -- 軌道の描画
-        let mkVertex (x, y, z) = vertex $ Vertex3 x y z
-        renderPrimitive LineStrip $ mapM_ mkVertex ps
-    -- 表示
-    swapBuffers
-</code></pre>
+        rotate r <span class="fu">$</span> <span class="dt">Vector3</span> <span class="dv">0</span> <span class="dv">1</span> <span class="dv">0</span>
+        <span class="co">-- 軌道の描画</span>
+        <span class="kw">let</span> mkVertex (x, y, z) <span class="fu">=</span> vertex <span class="fu">$</span> <span class="dt">Vertex3</span> x y z
+        renderPrimitive <span class="dt">LineStrip</span> <span class="fu">$</span> mapM_ mkVertex ps
+    <span class="co">-- 表示</span>
+    swapBuffers</code></pre></div>
 <p>軌道を実際に描画する部分です。<code>preservingMatrix</code>はとても便利で行列のpushとpopと勝手にやってくれて現在の状態を切り出して中で自由に使うことができます。</p>
-<pre><code class="language-haskell">keyboardMouse :: IORef GLfloat -&gt; IORef GLfloat -&gt; KeyboardMouseCallback
-keyboardMouse rot sc _key _state _ _ = do
-    case _key of
-        Char &#39;w&#39; -&gt; sc  $~! (*1.1)
-        Char &#39;a&#39; -&gt; rot $~! (+5)
-        Char &#39;s&#39; -&gt; sc  $~! (*0.9)
-        Char &#39;d&#39; -&gt; rot $~! (subtract 5)
-        _        -&gt; return ()
-</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">keyboardMouse ::</span> <span class="dt">IORef</span> <span class="dt">GLfloat</span> <span class="ot">-&gt;</span> <span class="dt">IORef</span> <span class="dt">GLfloat</span> <span class="ot">-&gt;</span> <span class="dt">KeyboardMouseCallback</span>
+keyboardMouse rot sc _key _state _ _ <span class="fu">=</span> <span class="kw">do</span>
+    <span class="kw">case</span> _key <span class="kw">of</span>
+        <span class="dt">Char</span> <span class="ch">'w'</span> <span class="ot">-&gt;</span> sc  <span class="fu">$~!</span> (<span class="fu">*</span><span class="fl">1.1</span>)
+        <span class="dt">Char</span> <span class="ch">'a'</span> <span class="ot">-&gt;</span> rot <span class="fu">$~!</span> (<span class="fu">+</span><span class="dv">5</span>)
+        <span class="dt">Char</span> <span class="ch">'s'</span> <span class="ot">-&gt;</span> sc  <span class="fu">$~!</span> (<span class="fu">*</span><span class="fl">0.9</span>)
+        <span class="dt">Char</span> <span class="ch">'d'</span> <span class="ot">-&gt;</span> rot <span class="fu">$~!</span> (subtract <span class="dv">5</span>)
+        _        <span class="ot">-&gt;</span> return ()</code></pre></div>
 <p>キーボード（とマウス）のイベントを制御する関数です。WASDが押されると対応するパラメータの値を変更しています。</p>
 <p>実行するときは必ずコンパイルしてから実行してください。</p>
-<pre><code class="language-haskell">$ ghc Main.hs
-$ ./Main
-</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">$</span> ghc Main.hs
+<span class="fu">$</span> <span class="fu">./</span><span class="dt">Main</span></code></pre></div>
 <p>描画されたグラフを眺めていると手前と奥が表示されなくなっていることに気が付きました。調べるとカメラの設定でどこまで表示するかを調整できるようで<code>frustum</code>とか<code>perspevtive</code>とかをいじってたのですが結局直すことができませんでした… OpenGLの勉強を真面目にしたいと思います。</p>
 <p>コード全体を以下に載せておきます。</p>
-<hr>
-<pre><code class="language-haskell">import Data.IORef
-import Graphics.UI.GLUT
+<hr />
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.IORef</span>
+<span class="kw">import </span><span class="dt">Graphics.UI.GLUT</span>
 
-type Point = (GLfloat, GLfloat, GLfloat)
-type Line  = [Point]
+<span class="kw">type</span> <span class="dt">Point</span> <span class="fu">=</span> (<span class="dt">GLfloat</span>, <span class="dt">GLfloat</span>, <span class="dt">GLfloat</span>)
+<span class="kw">type</span> <span class="dt">Line</span>  <span class="fu">=</span> [<span class="dt">Point</span>]
 
--- 初期値
-start = (1.0, 1.0, 1.0)
+<span class="co">-- 初期値</span>
+start <span class="fu">=</span> (<span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>)
 
--- ローレンツ方程式
-lorenz :: Point -&gt; Point
-lorenz = \(x, y, z) -&gt;
-    let dt = 0.01
-        p  = 10.0
-        r  = 28.0
-        b  = 8.0/3.0
-    in  ( (\x&#39; -&gt; x + x&#39; * dt) $ p * (y - x)
-        , (\y&#39; -&gt; y + y&#39; * dt) $ x * (r - z) - y
-        , (\z&#39; -&gt; z + z&#39; * dt) $ x * y - b * z
+<span class="co">-- ローレンツ方程式</span>
+<span class="ot">lorenz ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span>
+lorenz <span class="fu">=</span> \(x, y, z) <span class="ot">-&gt;</span>
+    <span class="kw">let</span> dt <span class="fu">=</span> <span class="fl">0.01</span>
+        p  <span class="fu">=</span> <span class="fl">10.0</span>
+        r  <span class="fu">=</span> <span class="fl">28.0</span>
+        b  <span class="fu">=</span> <span class="fl">8.0</span><span class="fu">/</span><span class="fl">3.0</span>
+    <span class="kw">in</span>  ( (\x' <span class="ot">-&gt;</span> x <span class="fu">+</span> x' <span class="fu">*</span> dt) <span class="fu">$</span> p <span class="fu">*</span> (y <span class="fu">-</span> x)
+        , (\y' <span class="ot">-&gt;</span> y <span class="fu">+</span> y' <span class="fu">*</span> dt) <span class="fu">$</span> x <span class="fu">*</span> (r <span class="fu">-</span> z) <span class="fu">-</span> y
+        , (\z' <span class="ot">-&gt;</span> z <span class="fu">+</span> z' <span class="fu">*</span> dt) <span class="fu">$</span> x <span class="fu">*</span> y <span class="fu">-</span> b <span class="fu">*</span> z
         )
 
-main :: IO ()
-main = do
-    -- OpenGLの初期化
-    (_progName, _args) &lt;- getArgsAndInitialize
-    initialDisplayMode $= [DoubleBuffered]
-    _window &lt;- createWindow &quot;Lorenz Attractor&quot;
-    -- 共有パラメータの設定
-    rot &lt;- newIORef 0
-    sc  &lt;- newIORef 0.02
-    orbit &lt;- newIORef [start]
-    -- コールバックの設定
-    keyboardMouseCallback $= Just (keyboardMouse rot sc)
-    idleCallback $= Just (idle orbit)
-    displayCallback $= display orbit rot sc
-    -- 実行
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+    <span class="co">-- OpenGLの初期化</span>
+    (_progName, _args) <span class="ot">&lt;-</span> getArgsAndInitialize
+    initialDisplayMode <span class="fu">$=</span> [<span class="dt">DoubleBuffered</span>]
+    _window <span class="ot">&lt;-</span> createWindow <span class="st">&quot;Lorenz Attractor&quot;</span>
+    <span class="co">-- 共有パラメータの設定</span>
+    rot <span class="ot">&lt;-</span> newIORef <span class="dv">0</span>
+    sc  <span class="ot">&lt;-</span> newIORef <span class="fl">0.02</span>
+    orbit <span class="ot">&lt;-</span> newIORef [start]
+    <span class="co">-- コールバックの設定</span>
+    keyboardMouseCallback <span class="fu">$=</span> <span class="dt">Just</span> (keyboardMouse rot sc)
+    idleCallback <span class="fu">$=</span> <span class="dt">Just</span> (idle orbit)
+    displayCallback <span class="fu">$=</span> display orbit rot sc
+    <span class="co">-- 実行</span>
     mainLoop
 
-idle :: IORef Line -&gt; IdleCallback
-idle orbit = do
-    ps &lt;- get orbit
-    orbit $= (lorenz (head ps) : take 10000 ps)
-    postRedisplay Nothing
+<span class="ot">idle ::</span> <span class="dt">IORef</span> <span class="dt">Line</span> <span class="ot">-&gt;</span> <span class="dt">IdleCallback</span>
+idle orbit <span class="fu">=</span> <span class="kw">do</span>
+    ps <span class="ot">&lt;-</span> get orbit
+    orbit <span class="fu">$=</span> (lorenz (head ps) <span class="fu">:</span> take <span class="dv">10000</span> ps)
+    postRedisplay <span class="dt">Nothing</span>
 
-display :: IORef Line -&gt; IORef GLfloat -&gt; IORef GLfloat -&gt; DisplayCallback
-display orbit rot sc = do 
-    -- バッファをクリア
-    clear [ColorBuffer]
-    -- 共有パラメータの取得
-    r &lt;- get rot
-    s &lt;- get sc
-    ps &lt;- get orbit
-    -- 変換行列の初期化
+<span class="ot">display ::</span> <span class="dt">IORef</span> <span class="dt">Line</span> <span class="ot">-&gt;</span> <span class="dt">IORef</span> <span class="dt">GLfloat</span> <span class="ot">-&gt;</span> <span class="dt">IORef</span> <span class="dt">GLfloat</span> <span class="ot">-&gt;</span> <span class="dt">DisplayCallback</span>
+display orbit rot sc <span class="fu">=</span> <span class="kw">do</span> 
+    <span class="co">-- バッファをクリア</span>
+    clear [<span class="dt">ColorBuffer</span>]
+    <span class="co">-- 共有パラメータの取得</span>
+    r <span class="ot">&lt;-</span> get rot
+    s <span class="ot">&lt;-</span> get sc
+    ps <span class="ot">&lt;-</span> get orbit
+    <span class="co">-- 変換行列の初期化</span>
     loadIdentity
-    preservingMatrix $ do
+    preservingMatrix <span class="fu">$</span> <span class="kw">do</span>
         scale s s s
-        rotate r $ Vector3 0 1 0
-        -- 軌道の描画
-        let mkVertex (x, y, z) = vertex $ Vertex3 x y z
-        renderPrimitive LineStrip $ mapM_ mkVertex ps
-    -- 表示
+        rotate r <span class="fu">$</span> <span class="dt">Vector3</span> <span class="dv">0</span> <span class="dv">1</span> <span class="dv">0</span>
+        <span class="co">-- 軌道の描画</span>
+        <span class="kw">let</span> mkVertex (x, y, z) <span class="fu">=</span> vertex <span class="fu">$</span> <span class="dt">Vertex3</span> x y z
+        renderPrimitive <span class="dt">LineStrip</span> <span class="fu">$</span> mapM_ mkVertex ps
+    <span class="co">-- 表示</span>
     swapBuffers
 
-keyboardMouse :: IORef GLfloat -&gt; IORef GLfloat -&gt; KeyboardMouseCallback
-keyboardMouse rot sc _key _state _ _ = do
-    case _key of
-        Char &#39;w&#39; -&gt; sc  $~! (*1.1)
-        Char &#39;a&#39; -&gt; rot $~! (+5)
-        Char &#39;s&#39; -&gt; sc  $~! (*0.9)
-        Char &#39;d&#39; -&gt; rot $~! (subtract 5)
-        _        -&gt; return ()
-</code></pre><table><tr><td><a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-</script><div id="fb-root"></div><script>(function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div></td><td><script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><ins style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-1606689071691648" data-ad-slot="9741642218" class="adsbygoogle"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></td></tr></table></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<span class="ot">keyboardMouse ::</span> <span class="dt">IORef</span> <span class="dt">GLfloat</span> <span class="ot">-&gt;</span> <span class="dt">IORef</span> <span class="dt">GLfloat</span> <span class="ot">-&gt;</span> <span class="dt">KeyboardMouseCallback</span>
+keyboardMouse rot sc _key _state _ _ <span class="fu">=</span> <span class="kw">do</span>
+    <span class="kw">case</span> _key <span class="kw">of</span>
+        <span class="dt">Char</span> <span class="ch">'w'</span> <span class="ot">-&gt;</span> sc  <span class="fu">$~!</span> (<span class="fu">*</span><span class="fl">1.1</span>)
+        <span class="dt">Char</span> <span class="ch">'a'</span> <span class="ot">-&gt;</span> rot <span class="fu">$~!</span> (<span class="fu">+</span><span class="dv">5</span>)
+        <span class="dt">Char</span> <span class="ch">'s'</span> <span class="ot">-&gt;</span> sc  <span class="fu">$~!</span> (<span class="fu">*</span><span class="fl">0.9</span>)
+        <span class="dt">Char</span> <span class="ch">'d'</span> <span class="ot">-&gt;</span> rot <span class="fu">$~!</span> (subtract <span class="dv">5</span>)
+        _        <span class="ot">-&gt;</span> return ()</code></pre></div>
+<div>
+    <a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div>
+</div>
 
-ga('create', 'UA-38246049-16', 'auto');
-ga('send', 'pageview');</script></body></html>
+            </div>
+        </div>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-38246049-16', 'auto');
+            ga('send', 'pageview');
+        </script>
+    </body>
+</html>

@@ -1,340 +1,357 @@
-<!DOCTYPE html><html><head><title>HaskellでSeleniumを使ってみる＠勉強会 </title><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora"><link rel="stylesheet" href="/css/kube.min.css"><link rel="stylesheet" href="/css/prism.css"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/octicons.css"><script type="text/javascript" src="/js/prism.js"></script></head><body><div class="units-row units-padding"><div class="unit-20 sidemenu"><h1><a href="/">flip map <img src="/samurai.png" style="margin:-15px 0 0 -30px;width:60px"></a></h1><p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160"></a></p><h2>Index</h2><ul><li><a href="/about"><span class="octicon octicon-person"></span> About</a></li><li><a href="/posts/"><span class="octicon octicon-file-text"></span> Blog</a></li><li><a href="https://github.com/lotz84" target="blank_"><span class="octicon octicon-mark-github"></span> Github</a></li><li><a href="https://twitter.com/lotz84_" target="blank_"><span class="octicon octicon-mention"></span> Twitter</a></li><li><a href="/feed.xml" target="blank_"><span class="octicon octicon-rss"></span> RSS</a></li></ul><script type="text/javascript">var nend_params = {"media":9473,"site":133290,"spot":352659,"type":1,"oriented":1};</script><script type="text/javascript" src="http://js1.nend.net/js/nendAdLoader.js"></script></div><div class="unit-80"><h1>HaskellでSeleniumを使ってみる＠勉強会</h1><p>2014/12/14</p><p>休日を利用して京都に帰って<a href="https://atnd.org/events/59820">【CAMPHOR- × サイボウズ】Selenium 勉強会</a>に参加してきました。主催してくださったCAMPHOR-とサイボウズの皆さん、楽しい勉強会をありがとうございました。
-勉強会ではハンズオン形式でSeleniumを学んだのですが最初のスライドに非公式だけどHaskellでも使えるとあったので挑戦してみました。単身でのHaskell参戦でしたがせっかくなのでたまった知見を書き起こしておこうと思います。</p>
-<p><a href="http://www.seleniumhq.org/">Selenium</a>はプログラムから自動的にブラウザを操作することが出来るツールです。
-WebサービスのUIテストに使われているようで勉強会では歴史的なとこからわかりやす解説してもらいました。</p>
-<p>主にテストに使われているらしいのですが自動的にブラウザを操作することが出来るならもっと色々使えそうで夢が広がります。
-そういえば友達がソシャゲの毎日ログインを自動化しようとしてたのでSeleniumをオススメできますね。その時はPhantomJSだけでゴリゴリ書いてたみたいですが…
-FirefoxとかChromeとかのブラウザを使ってテストができるのもSeleniumのいいとこですね！</p>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>HaskellでSeleniumを使ってみる＠勉強会</title>
+        <meta name="viewport" content="width=device-width" />
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora" />
+        <link rel="stylesheet" href="../css/kube.min.css" />
+        <link rel="stylesheet" href="../css/prism.css" />
+        <link rel="stylesheet" href="../css/main.css" />
+        <link rel="stylesheet" href="../font/octicons.css" />
+        <script type="text/javascript" src="../js/prism.js"></script>
+    </head>
+    <body>
+        <div class="units-row units-padding">
+            <div class="unit-20 sidemenu">
+                <h1><a href="../">flip map <img src="../img/samurai.png" style="margin:-15px 0 0 -30px;width:60px"></a></h1>
+                <p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160"></a></p>
+                <h2>Index</h2>
+                <ul>
+                    <li><a href="../about"><span class="octicon octicon-person"></span> About</a></li>
+                    <li><a href="../posts"><span class="octicon octicon-file-text"></span> Blog</a></li>
+                    <li><a href="https://github.com/lotz84" target="blank_"><span class="octicon octicon-mark-github"></span> Github</a></li>
+                    <li><a href="https://twitter.com/lotz84_" target="blank_"><span class="octicon octicon-mention"></span> Twitter</a></li>
+                    <li><a href="../feed.xml" target="blank_"><span class="octicon octicon-rss"></span> RSS</a></li>
+                </ul>
+            </div>
+            <div class="unit-80">
+                <h1>HaskellでSeleniumを使ってみる＠勉強会</h1>
+<p>2014/12/14</p>
+<p>休日を利用して京都に帰って<a href="https://atnd.org/events/59820">【CAMPHOR- × サイボウズ】Selenium 勉強会</a>に参加してきました。主催してくださったCAMPHOR-とサイボウズの皆さん、楽しい勉強会をありがとうございました。 勉強会ではハンズオン形式でSeleniumを学んだのですが最初のスライドに非公式だけどHaskellでも使えるとあったので挑戦してみました。単身でのHaskell参戦でしたがせっかくなのでたまった知見を書き起こしておこうと思います。</p>
+<p><a href="http://www.seleniumhq.org/">Selenium</a>はプログラムから自動的にブラウザを操作することが出来るツールです。 WebサービスのUIテストに使われているようで勉強会では歴史的なとこからわかりやす解説してもらいました。</p>
+<p>主にテストに使われているらしいのですが自動的にブラウザを操作することが出来るならもっと色々使えそうで夢が広がります。 そういえば友達がソシャゲの毎日ログインを自動化しようとしてたのでSeleniumをオススメできますね。その時はPhantomJSだけでゴリゴリ書いてたみたいですが… FirefoxとかChromeとかのブラウザを使ってテストができるのもSeleniumのいいとこですね！</p>
 <p>Seleniumが公式でサポートしている言語は<a href="http://www.seleniumhq.org/docs/">Document</a>を見てみると[Java, C#, Python, Ruby, PHP, Perl, JS]のあたりのようです。これ以外にも非公式でライブラリが用意されていてかなり多くの言語から使うことができそうです。</p>
-<p>さて肝心のHaskellからSeleniumを使う方法ですが「Haskell Selenium」でググると一番上に(2014/12/15調べ)出てくる<a href="http://hackage.haskell.org/package/webdriver">webdriver</a>を使えば良さそうです.
-PCはMacでブラウザはGoogleChrome、以下今回の記事で使うバージョン一覧です。</p>
+<p>さて肝心のHaskellからSeleniumを使う方法ですが「Haskell Selenium」でググると一番上に(2014/12/15調べ)出てくる<a href="http://hackage.haskell.org/package/webdriver">webdriver</a>を使えば良さそうです. PCはMacでブラウザはGoogleChrome、以下今回の記事で使うバージョン一覧です。</p>
 <table>
 <thead>
-<tr>
-<th style="text-align:left">name</th>
-<th style="text-align:left">version</th>
+<tr class="header">
+<th align="left">name</th>
+<th align="left">version</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left"><a href="http://hackage.haskell.org/package/webdriver">webdriver</a></td>
-<td style="text-align:left">0.6.0.3</td>
+<tr class="odd">
+<td align="left"><a href="http://hackage.haskell.org/package/webdriver">webdriver</a></td>
+<td align="left">0.6.0.3</td>
 </tr>
-<tr>
-<td style="text-align:left"><a href="http://www.seleniumhq.org/download/">Selenium Server</a></td>
-<td style="text-align:left">2.44.0</td>
+<tr class="even">
+<td align="left"><a href="http://www.seleniumhq.org/download/">Selenium Server</a></td>
+<td align="left">2.44.0</td>
 </tr>
-<tr>
-<td style="text-align:left"><a href="https://sites.google.com/a/chromium.org/chromedriver">ChromeDriver</a></td>
-<td style="text-align:left">2.13</td>
+<tr class="odd">
+<td align="left"><a href="https://sites.google.com/a/chromium.org/chromedriver">ChromeDriver</a></td>
+<td align="left">2.13</td>
 </tr>
 </tbody>
 </table>
-<h2>環境構築</h2><p>作業用ディレクトリを作ります。</p>
-<pre><code class="language-bash">$ mkdir selenium-test
-$ cd selenium-test
-</code></pre>
+<h2 id="環境構築">環境構築</h2>
+<p>作業用ディレクトリを作ります。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">mkdir</span> selenium-test
+$ <span class="kw">cd</span> selenium-test</code></pre></div>
 <p>Selenium ServerとChromeDriverをここにダウンロードしてきてください</p>
-<pre><code class="language-bash">$ tree .
-.
-├── chromedriver
-└── selenium-server-standalone-2.44.0.jar
-</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">tree</span> .
+<span class="kw">.</span>
+├── <span class="kw">chromedriver</span>
+└── <span class="kw">selenium-server-standalone-2.44.0.jar</span></code></pre></div>
 <p>さっそくSelenium Serverを起動しておきましょう</p>
-<pre><code class="language-bash">$ java -jar selenium-server-standalone-2.44.0.jar
-</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">java</span> -jar selenium-server-standalone-2.44.0.jar</code></pre></div>
 <p>webdriverを導入します。cabalコマンドで一発です。</p>
-<pre><code class="language-bash">$ cabal install webdriver
-</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cabal</span> install webdriver</code></pre></div>
 <p>10分ぐらいかかるのでお茶でも飲みましょう。</p>
-<h2>Hello Selenium</h2><p>環境構築が終わったらさっそくSeleniumを使っていきましょう！
-webdriverの<a href="https://github.com/kallisti-dev/hs-webdriver">README</a>に書いてあるコードをそのまま実行してみましょう。Chromeで使う想定なのでmyConfigの定義は修正しています。</p>
-<pre><code class="language-bash">$ vim hello.hs
-</code></pre>
-<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
-import Test.WebDriver
+<h2 id="hello-selenium">Hello Selenium</h2>
+<p>環境構築が終わったらさっそくSeleniumを使っていきましょう！ webdriverの<a href="https://github.com/kallisti-dev/hs-webdriver">README</a>に書いてあるコードをそのまま実行してみましょう。Chromeで使う想定なのでmyConfigの定義は修正しています。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">vim</span> hello.hs</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
+<span class="kw">import </span><span class="dt">Test.WebDriver</span>
 
-myConfig :: WDConfig
-myConfig = defaultConfig { wdCapabilities = (defaultCaps {browser = chrome})}
+<span class="ot">myConfig ::</span> <span class="dt">WDConfig</span>
+myConfig <span class="fu">=</span> defaultConfig { wdCapabilities <span class="fu">=</span> (defaultCaps {browser <span class="fu">=</span> chrome})}
 
-main :: IO ()
-main = runSession myConfig $ do
-  openPage &quot;http://google.com&quot;
-  searchInput &lt;- findElem (ByCSS &quot;input[type=&#39;text&#39;]&quot;)
-  sendKeys &quot;Hello, World!&quot; searchInput
-</code></pre>
-<pre><code class="language-bash">$ runghc hello.hs
-</code></pre>
-<p>バックグラウンドでブラウザが起動して&quot;Hello, World!&quot;をググっていれば成功です！</p>
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> runSession myConfig <span class="fu">$</span> <span class="kw">do</span>
+  openPage <span class="st">&quot;http://google.com&quot;</span>
+  searchInput <span class="ot">&lt;-</span> findElem (<span class="dt">ByCSS</span> <span class="st">&quot;input[type='text']&quot;</span>)
+  sendKeys <span class="st">&quot;Hello, World!&quot;</span> searchInput</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">runghc</span> hello.hs</code></pre></div>
+<p>バックグラウンドでブラウザが起動して“Hello, World!”をググっていれば成功です！</p>
 <p>コードを簡単に説明すると</p>
-<pre><code class="language-haskell">myConfig :: WDConfig
-myConfig = defaultConfig { wdCapabilities = (defaultCaps {browser = chrome})}
-</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">myConfig ::</span> <span class="dt">WDConfig</span>
+myConfig <span class="fu">=</span> defaultConfig { wdCapabilities <span class="fu">=</span> (defaultCaps {browser <span class="fu">=</span> chrome})}</code></pre></div>
 <p>はWebDriverの基本設定を表す関数です。<a href="https://hackage.haskell.org/package/webdriver/docs/Test-WebDriver.html#t:WDConfig"><code>WDConfig</code></a>はHostとかPortとかを設定するレコードになっています。今回変更しているのは<code>wdCapabilities</code>のところでこれは<a href="https://hackage.haskell.org/package/webdriver/docs/Test-WebDriver.html#t:Capabilities"><code>Capabilities</code></a>というレコードです。<code>Capabilities</code>はブラウザの種類を設定したりアラートを制御できるようにするかとかWebStorageを制御できるようにするかとか許可系の設定をするレコードになっています。今回はブラウザをChromeに設定しています。</p>
-<pre><code class="language-haskell">main :: IO ()
-main = runSession myConfig $ do
-</code></pre>
-<p><code>runSession</code>の型は<code>WDConfig -&gt; WD a -&gt; IO a</code>になっていて設定と実行手順を渡せば実行してくれる関数です。
-Seleniumの命令は基本的にはWDモナドを返す関数なのでdo構文を使って命令を組み立てていきます。</p>
-<pre><code class="language-haskell">openPage &quot;http://google.com&quot;
-</code></pre>
-<p>まず<a href="http://google.com">http://google.com</a>をブラウザで開きます。</p>
-<pre><code class="language-haskell">searchInput &lt;- findElem (ByCSS &quot;input[type=&#39;text&#39;]&quot;)
-</code></pre>
-<p>次にCSSセレクタで&quot;input[type=&#39;text&#39;]&quot;なる要素を取得して<code>searchInput</code>に束縛しています。</p>
-<pre><code class="language-haskell">sendKeys &quot;Hello, World!&quot; searchInput
-</code></pre>
-<p>最後に<code>searchInput</code>に&quot;Hello, World!&quot;と打って検索を実行しています。</p>
-<h2>webdriver で使える命令</h2><p>webdriverはSelenium公式ではないので(?)Seleniumのドキュメントに載ってる命令と違う名前の関数が多々あります。例えばさっきの例の<code>openPage</code>は公式のライブラリでは<code>get</code>と書く関数と同じです。眺めてみるとwebdriverの方が関数名はわかりやすくなっている気がします。
-Seleniumのドキュメントを読んでだいたいどんな命令が使えるのかを把握してからwebdriverのHackageを読んで実際どういう関数で使えるのかを調べるのがいいかもしれませんね。
-命令は<a href="http://hackage.haskell.org/package/webdriver/docs/Test-WebDriver-Commands.html">Test.WebDriver.Commands</a>にだいたい載っています。以下によく使いそうな命令を列挙してみます。なお以下の命令表では全て型宣言の頭に<code>WebDriver wd =&gt;</code>が付いているものとします</p>
-<h3>ナビゲーション</h3><table>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> runSession myConfig <span class="fu">$</span> <span class="kw">do</span></code></pre></div>
+<p><code>runSession</code>の型は<code>WDConfig -&gt; WD a -&gt; IO a</code>になっていて設定と実行手順を渡せば実行してくれる関数です。 Seleniumの命令は基本的にはWDモナドを返す関数なのでdo構文を使って命令を組み立てていきます。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">openPage <span class="st">&quot;http://google.com&quot;</span></code></pre></div>
+<p>まず<a href="http://google.com" class="uri">http://google.com</a>をブラウザで開きます。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">searchInput <span class="ot">&lt;-</span> findElem (<span class="dt">ByCSS</span> <span class="st">&quot;input[type='text']&quot;</span>)</code></pre></div>
+<p>次にCSSセレクタで“input[type=‘text’]”なる要素を取得して<code>searchInput</code>に束縛しています。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">sendKeys <span class="st">&quot;Hello, World!&quot;</span> searchInput</code></pre></div>
+<p>最後に<code>searchInput</code>に“Hello, World!”と打って検索を実行しています。</p>
+<h2 id="webdriver-で使える命令">webdriver で使える命令</h2>
+<p>webdriverはSelenium公式ではないので(?)Seleniumのドキュメントに載ってる命令と違う名前の関数が多々あります。例えばさっきの例の<code>openPage</code>は公式のライブラリでは<code>get</code>と書く関数と同じです。眺めてみるとwebdriverの方が関数名はわかりやすくなっている気がします。 Seleniumのドキュメントを読んでだいたいどんな命令が使えるのかを把握してからwebdriverのHackageを読んで実際どういう関数で使えるのかを調べるのがいいかもしれませんね。 命令は<a href="http://hackage.haskell.org/package/webdriver/docs/Test-WebDriver-Commands.html">Test.WebDriver.Commands</a>にだいたい載っています。以下によく使いそうな命令を列挙してみます。なお以下の命令表では全て型宣言の頭に<code>WebDriver wd =&gt;</code>が付いているものとします</p>
+<h3 id="ナビゲーション">ナビゲーション</h3>
+<table>
 <thead>
-<tr>
-<th style="text-align:left">命令</th>
-<th style="text-align:left">説明</th>
+<tr class="header">
+<th align="left">命令</th>
+<th align="left">説明</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left">openPage :: String -&gt; wd ()</td>
-<td style="text-align:left">指定されたURLのページを開く</td>
+<tr class="odd">
+<td align="left">openPage :: String -&gt; wd ()</td>
+<td align="left">指定されたURLのページを開く</td>
 </tr>
-<tr>
-<td style="text-align:left">forward :: wd ()</td>
-<td style="text-align:left">次へ進む</td>
+<tr class="even">
+<td align="left">forward :: wd ()</td>
+<td align="left">次へ進む</td>
 </tr>
-<tr>
-<td style="text-align:left">back :: wd ()</td>
-<td style="text-align:left">前に戻る</td>
+<tr class="odd">
+<td align="left">back :: wd ()</td>
+<td align="left">前に戻る</td>
 </tr>
-<tr>
-<td style="text-align:left">refresh :: wd ()</td>
-<td style="text-align:left">更新</td>
+<tr class="even">
+<td align="left">refresh :: wd ()</td>
+<td align="left">更新</td>
 </tr>
 </tbody>
 </table>
-<h3>ページ情報</h3><table>
+<h3 id="ページ情報">ページ情報</h3>
+<table>
 <thead>
-<tr>
-<th style="text-align:left">命令</th>
-<th style="text-align:left">説明</th>
+<tr class="header">
+<th align="left">命令</th>
+<th align="left">説明</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left">getCurrentURL :: wd String</td>
-<td style="text-align:left">開いてるページのURLを取得</td>
+<tr class="odd">
+<td align="left">getCurrentURL :: wd String</td>
+<td align="left">開いてるページのURLを取得</td>
 </tr>
-<tr>
-<td style="text-align:left">getSource :: wd Text</td>
-<td style="text-align:left">開いてるページのソースを取得</td>
+<tr class="even">
+<td align="left">getSource :: wd Text</td>
+<td align="left">開いてるページのソースを取得</td>
 </tr>
-<tr>
-<td style="text-align:left">screenshot :: wd ByteString</td>
-<td style="text-align:left">開いてるページのスクリーンショットを撮る</td>
+<tr class="odd">
+<td align="left">screenshot :: wd ByteString</td>
+<td align="left">開いてるページのスクリーンショットを撮る</td>
 </tr>
 </tbody>
 </table>
-<h3>要素の検索</h3><table>
+<h3 id="要素の検索">要素の検索</h3>
+<table>
 <thead>
-<tr>
-<th style="text-align:left">命令</th>
-<th style="text-align:left">説明</th>
+<tr class="header">
+<th align="left">命令</th>
+<th align="left">説明</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left">findElem :: Selector -&gt; wd Element</td>
-<td style="text-align:left">セレクタ(後述)から要素を取得</td>
+<tr class="odd">
+<td align="left">findElem :: Selector -&gt; wd Element</td>
+<td align="left">セレクタ(後述)から要素を取得</td>
 </tr>
-<tr>
-<td style="text-align:left">findElems :: Selector -&gt; wd [Element]</td>
-<td style="text-align:left">セレクタから全ての要素を取得</td>
+<tr class="even">
+<td align="left">findElems :: Selector -&gt; wd [Element]</td>
+<td align="left">セレクタから全ての要素を取得</td>
 </tr>
-<tr>
-<td style="text-align:left">findElemFrom :: Element -&gt; Selector -&gt; wd Element</td>
-<td style="text-align:left">セレクタから要素下の要素を取得</td>
+<tr class="odd">
+<td align="left">findElemFrom :: Element -&gt; Selector -&gt; wd Element</td>
+<td align="left">セレクタから要素下の要素を取得</td>
 </tr>
-<tr>
-<td style="text-align:left">findElemsFrom :: Element -&gt; Selector -&gt; wd [Element]</td>
-<td style="text-align:left">セレクタから要素下の全ての要素を取得</td>
+<tr class="even">
+<td align="left">findElemsFrom :: Element -&gt; Selector -&gt; wd [Element]</td>
+<td align="left">セレクタから要素下の全ての要素を取得</td>
 </tr>
 </tbody>
 </table>
-<h3>要素へのアクション</h3><table>
+<h3 id="要素へのアクション">要素へのアクション</h3>
+<table>
 <thead>
-<tr>
-<th style="text-align:left">命令</th>
-<th style="text-align:left">説明</th>
+<tr class="header">
+<th align="left">命令</th>
+<th align="left">説明</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left">click :: Element -&gt; wd ()</td>
-<td style="text-align:left">要素をクリック</td>
+<tr class="odd">
+<td align="left">click :: Element -&gt; wd ()</td>
+<td align="left">要素をクリック</td>
 </tr>
-<tr>
-<td style="text-align:left">submit :: Element -&gt; wd ()</td>
-<td style="text-align:left">要素をsubmit</td>
+<tr class="even">
+<td align="left">submit :: Element -&gt; wd ()</td>
+<td align="left">要素をsubmit</td>
 </tr>
-<tr>
-<td style="text-align:left">getText :: Element -&gt; wd Text</td>
-<td style="text-align:left">要素のテキストを取得</td>
+<tr class="odd">
+<td align="left">getText :: Element -&gt; wd Text</td>
+<td align="left">要素のテキストを取得</td>
 </tr>
 </tbody>
 </table>
-<h3>要素へのキー入力</h3><table>
+<h3 id="要素へのキー入力">要素へのキー入力</h3>
+<table>
 <thead>
-<tr>
-<th style="text-align:left">命令</th>
-<th style="text-align:left">説明</th>
+<tr class="header">
+<th align="left">命令</th>
+<th align="left">説明</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left">sendKeys :: Text -&gt; Element -&gt; wd ()</td>
-<td style="text-align:left">要素にテキストを入力してEnter</td>
+<tr class="odd">
+<td align="left">sendKeys :: Text -&gt; Element -&gt; wd ()</td>
+<td align="left">要素にテキストを入力してEnter</td>
 </tr>
-<tr>
-<td style="text-align:left">clearInput :: Element -&gt; wd ()</td>
-<td style="text-align:left">要素のテキストをクリア</td>
+<tr class="even">
+<td align="left">clearInput :: Element -&gt; wd ()</td>
+<td align="left">要素のテキストをクリア</td>
 </tr>
 </tbody>
 </table>
-<h3>要素の情報</h3><table>
+<h3 id="要素の情報">要素の情報</h3>
+<table>
 <thead>
-<tr>
-<th style="text-align:left">命令</th>
-<th style="text-align:left">説明</th>
+<tr class="header">
+<th align="left">命令</th>
+<th align="left">説明</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left">attr :: Element -&gt; Text -&gt; wd (Maybe Text)</td>
-<td style="text-align:left">要素の属性を取得</td>
+<tr class="odd">
+<td align="left">attr :: Element -&gt; Text -&gt; wd (Maybe Text)</td>
+<td align="left">要素の属性を取得</td>
 </tr>
-<tr>
-<td style="text-align:left">cssProp :: Element -&gt; Text -&gt; wd (Maybe Text)</td>
-<td style="text-align:left">要素のCSSを取得</td>
+<tr class="even">
+<td align="left">cssProp :: Element -&gt; Text -&gt; wd (Maybe Text)</td>
+<td align="left">要素のCSSを取得</td>
 </tr>
-<tr>
-<td style="text-align:left">elemPos :: Element -&gt; wd (Int, Int)</td>
-<td style="text-align:left">要素の位置を取得</td>
+<tr class="odd">
+<td align="left">elemPos :: Element -&gt; wd (Int, Int)</td>
+<td align="left">要素の位置を取得</td>
 </tr>
-<tr>
-<td style="text-align:left">elemSize :: Element -&gt; wd (Word, Word)</td>
-<td style="text-align:left">要素のサイズを取得</td>
+<tr class="even">
+<td align="left">elemSize :: Element -&gt; wd (Word, Word)</td>
+<td align="left">要素のサイズを取得</td>
 </tr>
-<tr>
-<td style="text-align:left">isSelected :: Element -&gt; wd Bool</td>
-<td style="text-align:left">要素が選択されているかどうかを取得</td>
+<tr class="odd">
+<td align="left">isSelected :: Element -&gt; wd Bool</td>
+<td align="left">要素が選択されているかどうかを取得</td>
 </tr>
-<tr>
-<td style="text-align:left">isEnabled :: Element -&gt; wd Bool</td>
-<td style="text-align:left">要素が有効かどうかを取得</td>
+<tr class="even">
+<td align="left">isEnabled :: Element -&gt; wd Bool</td>
+<td align="left">要素が有効かどうかを取得</td>
 </tr>
-<tr>
-<td style="text-align:left">isDisplayed :: Element -&gt; wd Bool</td>
-<td style="text-align:left">要素が表示されているかどうかを取得</td>
+<tr class="odd">
+<td align="left">isDisplayed :: Element -&gt; wd Bool</td>
+<td align="left">要素が表示されているかどうかを取得</td>
 </tr>
-<tr>
-<td style="text-align:left">tagName :: Element -&gt; wd Text</td>
-<td style="text-align:left">要素のタグ名を取得</td>
+<tr class="even">
+<td align="left">tagName :: Element -&gt; wd Text</td>
+<td align="left">要素のタグ名を取得</td>
 </tr>
-<tr>
-<td style="text-align:left">activeElem :: wd Element</td>
-<td style="text-align:left">現在フォーカスされている要素を取得</td>
+<tr class="odd">
+<td align="left">activeElem :: wd Element</td>
+<td align="left">現在フォーカスされている要素を取得</td>
 </tr>
 </tbody>
 </table>
 <p>ざっと挙げて見ましたがかなり色々できそうですね！この他にも複数Windowを制御したりクッキーをいじったりもできるので一度<a href="http://hackage.haskell.org/package/webdriver/docs/Test-WebDriver-Commands.html">Test.WebDriver.Commands</a>を読むことをおすすめします。</p>
 <p>さて上に挙げた命令にちょくちょく出てくるSelectorですが重要なので定義を挙げておきます</p>
-<pre><code class="language-haskell">data Selector = ById Text
-              | ByName Text
-              | ByClass Text
-              | ByTag Text
-              | ByLinkText Text
-              | ByPartialLinkText Text
-              | ByCSS Text
-              | ByXPath Text
-              deriving (Eq, Show, Ord)
-</code></pre>
-<p>型構築子を見るとわかると思いますが、様々な方法で要素を選択する型ですね。
-<code>ById &quot;someid&quot;</code> は大体 <code>document.getElementById(&quot;someid&quot;)</code>
-<code>ByClass &quot;someclass&quot;</code> は大体 <code>document.getElementsByClassName(&quot;someclass&quot;)</code>
-に対応してるわけです。さっきの<code>hello.hs</code>では<code>ByCSS</code>を使ってましたね！
-中でも便利なのが<code>ByLinkText</code>でこれは特定のテキストのaタグを取ってくることができる便利関数です！ハンズオンでも使って盛り上がっていました。</p>
-<h2>ググってリンクを踏んでみる</h2><p>次の例としてGoogleで検索して1件目のリンクを踏んでURLを取得するシナリオを考えてみましょう。
-Googleで検索して検索結果を利用する時の問題として検索結果が非同期で取得されるという事があります。ちょっと考えると特定のDOMが生成されるまで待てばいいことはわかるのですがwebdriverではどのように実装すればいいでしょう。答えを言ってしまうと、こういう時は<a href="http://hackage.haskell.org/package/webdriver/docs/Test-WebDriver-Commands-Wait.html">Test.WebDriver.Commands.Wait</a>にある<code>waitUntil</code>を使います。</p>
-<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
-import Test.WebDriver
-import Test.WebDriver.Commands.Wait
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Selector</span> <span class="fu">=</span> <span class="dt">ById</span> <span class="dt">Text</span>
+              <span class="fu">|</span> <span class="dt">ByName</span> <span class="dt">Text</span>
+              <span class="fu">|</span> <span class="dt">ByClass</span> <span class="dt">Text</span>
+              <span class="fu">|</span> <span class="dt">ByTag</span> <span class="dt">Text</span>
+              <span class="fu">|</span> <span class="dt">ByLinkText</span> <span class="dt">Text</span>
+              <span class="fu">|</span> <span class="dt">ByPartialLinkText</span> <span class="dt">Text</span>
+              <span class="fu">|</span> <span class="dt">ByCSS</span> <span class="dt">Text</span>
+              <span class="fu">|</span> <span class="dt">ByXPath</span> <span class="dt">Text</span>
+              <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>, <span class="dt">Ord</span>)</code></pre></div>
+<p>型構築子を見るとわかると思いますが、様々な方法で要素を選択する型ですね。 <code>ById &quot;someid&quot;</code> は大体 <code>document.getElementById(&quot;someid&quot;)</code> <code>ByClass &quot;someclass&quot;</code> は大体 <code>document.getElementsByClassName(&quot;someclass&quot;)</code> に対応してるわけです。さっきの<code>hello.hs</code>では<code>ByCSS</code>を使ってましたね！ 中でも便利なのが<code>ByLinkText</code>でこれは特定のテキストのaタグを取ってくることができる便利関数です！ハンズオンでも使って盛り上がっていました。</p>
+<h2 id="ググってリンクを踏んでみる">ググってリンクを踏んでみる</h2>
+<p>次の例としてGoogleで検索して1件目のリンクを踏んでURLを取得するシナリオを考えてみましょう。 Googleで検索して検索結果を利用する時の問題として検索結果が非同期で取得されるという事があります。ちょっと考えると特定のDOMが生成されるまで待てばいいことはわかるのですがwebdriverではどのように実装すればいいでしょう。答えを言ってしまうと、こういう時は<a href="http://hackage.haskell.org/package/webdriver/docs/Test-WebDriver-Commands-Wait.html">Test.WebDriver.Commands.Wait</a>にある<code>waitUntil</code>を使います。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
+<span class="kw">import </span><span class="dt">Test.WebDriver</span>
+<span class="kw">import </span><span class="dt">Test.WebDriver.Commands.Wait</span>
 
-myConfig :: WDConfig
-myConfig = defaultConfig { wdCapabilities = (defaultCaps {browser = chrome})}
+<span class="ot">myConfig ::</span> <span class="dt">WDConfig</span>
+myConfig <span class="fu">=</span> defaultConfig { wdCapabilities <span class="fu">=</span> (defaultCaps {browser <span class="fu">=</span> chrome})}
 
-main :: IO ()
-main = do
-  url &lt;- runSession myConfig $ do
-    openPage &quot;http://google.com&quot;
-    searchInput &lt;- findElem (ByCSS &quot;input[type=&#39;text&#39;]&quot;)
-    sendKeys &quot;CAMPHOR&quot; searchInput
-    waitUntil 30 $ findElem (ById &quot;search&quot;)
-    search &lt;- findElem (ById &quot;search&quot;)
-    links &lt;- findElemsFrom search (ByPartialLinkText &quot;CAMPHOR-&quot;)
-    click $ head links
-    url &lt;- getCurrentURL
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+  url <span class="ot">&lt;-</span> runSession myConfig <span class="fu">$</span> <span class="kw">do</span>
+    openPage <span class="st">&quot;http://google.com&quot;</span>
+    searchInput <span class="ot">&lt;-</span> findElem (<span class="dt">ByCSS</span> <span class="st">&quot;input[type='text']&quot;</span>)
+    sendKeys <span class="st">&quot;CAMPHOR&quot;</span> searchInput
+    waitUntil <span class="dv">30</span> <span class="fu">$</span> findElem (<span class="dt">ById</span> <span class="st">&quot;search&quot;</span>)
+    search <span class="ot">&lt;-</span> findElem (<span class="dt">ById</span> <span class="st">&quot;search&quot;</span>)
+    links <span class="ot">&lt;-</span> findElemsFrom search (<span class="dt">ByPartialLinkText</span> <span class="st">&quot;CAMPHOR-&quot;</span>)
+    click <span class="fu">$</span> head links
+    url <span class="ot">&lt;-</span> getCurrentURL
     closeSession
     return url
-  print url
-</code></pre>
-<p>実行して<code>&quot;https://camph.net/&quot;</code>が返ってくれば成功です！
-（ずっとトップに出て欲しいものです）</p>
-<pre><code class="language-bash">$runghc search.hs
-&quot;https://camph.net/&quot;
-</code></pre>
+  print url</code></pre></div>
+<p>実行して<code>&quot;https://camph.net/&quot;</code>が返ってくれば成功です！ （ずっとトップに出て欲しいものです）</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">$runghc</span> <span class="kw">search.hs</span>
+<span class="st">&quot;https://camph.net/&quot;</span></code></pre></div>
 <p>コードを見て行きましょう。<code>&quot;CAMPHOR&quot;</code>で検索するところまでは<code>hello.hs</code>と同じですね。</p>
-<pre><code class="language-haskell">waitUntil 30 $ findElem (ById &quot;search&quot;)
-</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">waitUntil <span class="dv">30</span> <span class="fu">$</span> findElem (<span class="dt">ById</span> <span class="st">&quot;search&quot;</span>)</code></pre></div>
 <p><code>waitUntil</code> はその名の通り条件が満たされるまで待つ関数です。</p>
-<pre><code class="language-haskell">waitUntil :: WDSessionState m =&gt; Double -&gt; m a -&gt; m a
-</code></pre>
-<p>第一引数にはタイムアウト時間を設定します。
-第二引数には条件を記述するのですが</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">waitUntil ::</span> <span class="dt">WDSessionState</span> m <span class="ot">=&gt;</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> m a <span class="ot">-&gt;</span> m a</code></pre></div>
+<p>第一引数にはタイムアウト時間を設定します。 第二引数には条件を記述するのですが</p>
 <ul>
 <li>条件が満たされない時は<code>ExpectFailed</code>を投げ</li>
 <li>条件が満たされた時は<code>ExpectFailed</code>を投げない</li>
 </ul>
 <p>ような関数を渡します。<code>findElem</code>は指定されたセレクタが存在しない時に<code>NoSuchElement</code>の例外を投げるので条件として使えるわけです。</p>
-<pre><code class="language-haskell">search &lt;- findElem (ById &quot;search&quot;)
-links &lt;- findElemsFrom search (ByPartialLinkText &quot;CAMPHOR-&quot;)
-click $ head links
-</code></pre>
-<p>検索結果が表示されたらまず<code>id=&quot;search&quot;</code>の要素を<code>search</code>に束縛します。次に<code>search</code>の下にあるリンクの要素でテキストに&quot;CAMPHOR-&quot;を含むものを取ってきて<code>links</code>に束縛します。<code>links</code>には条件に合う要素が全て束縛されているので<code>head</code>で最初の要素を取り出して<code>click</code>でクリックします。</p>
-<pre><code class="language-haskell">url &lt;- getCurrentURL
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">search <span class="ot">&lt;-</span> findElem (<span class="dt">ById</span> <span class="st">&quot;search&quot;</span>)
+links <span class="ot">&lt;-</span> findElemsFrom search (<span class="dt">ByPartialLinkText</span> <span class="st">&quot;CAMPHOR-&quot;</span>)
+click <span class="fu">$</span> head links</code></pre></div>
+<p>検索結果が表示されたらまず<code>id=&quot;search&quot;</code>の要素を<code>search</code>に束縛します。次に<code>search</code>の下にあるリンクの要素でテキストに“CAMPHOR-”を含むものを取ってきて<code>links</code>に束縛します。<code>links</code>には条件に合う要素が全て束縛されているので<code>head</code>で最初の要素を取り出して<code>click</code>でクリックします。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">url <span class="ot">&lt;-</span> getCurrentURL
 closeSession
-return url
-</code></pre>
-<p>リンクを飛んだらURLを取得して<code>closeSession</code>でブラウザを閉じてしまいます。
-最後に<code>return url</code>で取得したURLを返却します。</p>
-<pre><code class="language-haskell">url &lt;- runSession myConfig $ do
-    ...
+return url</code></pre></div>
+<p>リンクを飛んだらURLを取得して<code>closeSession</code>でブラウザを閉じてしまいます。 最後に<code>return url</code>で取得したURLを返却します。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">url <span class="ot">&lt;-</span> runSession myConfig <span class="fu">$</span> <span class="kw">do</span>
+    <span class="fu">...</span>
     return url
-print url
-</code></pre>
+print url</code></pre></div>
 <p>全体として上記のようになっているので<code>return url</code>で返したURLは外側の<code>url</code>に束縛されてそれを<code>print</code>しています。</p>
-<p>以上SeleniumをHaskellで使う簡単な方法を見てきました。Haskellで書くとSeleniumの操作がWDモナドの統一されたインターフェースで記述することができてかなり読みやすく書くことが出来ると思います。今後は勉強会で得たSeleniumの知識を活かしてソシャゲの自動化をどんどん進めていきたいです(｀･ω･´)</p><table><tr><td><a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-</script><div id="fb-root"></div><script>(function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div></td><td><script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><ins style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-1606689071691648" data-ad-slot="9741642218" class="adsbygoogle"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></td></tr></table></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<p>以上SeleniumをHaskellで使う簡単な方法を見てきました。Haskellで書くとSeleniumの操作がWDモナドの統一されたインターフェースで記述することができてかなり読みやすく書くことが出来ると思います。今後は勉強会で得たSeleniumの知識を活かしてソシャゲの自動化をどんどん進めていきたいです(｀･ω･´)</p>
+<div>
+    <a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div>
+</div>
 
-ga('create', 'UA-38246049-16', 'auto');
-ga('send', 'pageview');</script></body></html>
+            </div>
+        </div>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-38246049-16', 'auto');
+            ga('send', 'pageview');
+        </script>
+    </body>
+</html>

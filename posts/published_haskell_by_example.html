@@ -1,5 +1,37 @@
-<!DOCTYPE html><html><head><title>Haskell by Exampleを公開しました </title><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora"><link rel="stylesheet" href="/css/kube.min.css"><link rel="stylesheet" href="/css/prism.css"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/octicons.css"><script type="text/javascript" src="/js/prism.js"></script></head><body><div class="units-row units-padding"><div class="unit-20 sidemenu"><h1><a href="/">flip map <img src="/samurai.png" style="margin:-15px 0 0 -30px;width:60px"></a></h1><p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160"></a></p><h2>Index</h2><ul><li><a href="/about"><span class="octicon octicon-person"></span> About</a></li><li><a href="/posts/"><span class="octicon octicon-file-text"></span> Blog</a></li><li><a href="https://github.com/lotz84" target="blank_"><span class="octicon octicon-mark-github"></span> Github</a></li><li><a href="https://twitter.com/lotz84_" target="blank_"><span class="octicon octicon-mention"></span> Twitter</a></li><li><a href="/feed.xml" target="blank_"><span class="octicon octicon-rss"></span> RSS</a></li></ul><script type="text/javascript">var nend_params = {"media":9473,"site":133290,"spot":352659,"type":1,"oriented":1};</script><script type="text/javascript" src="http://js1.nend.net/js/nendAdLoader.js"></script></div><div class="unit-80"><h1>Haskell by Exampleを公開しました</h1><p>2015/05/06</p><p>世の中はゴールデンウィークですね！今日は最終日です！！<br>GWは自由な時間がいっぱいあるのでたくさん勉強ができますね！（イヤッホー！）<br>というわけで暇な時間を持て余して<a href="http://lotz84.github.io/haskellbyexample/"><em>Haskell by Example</em></a>というコンテンツを作りました。(はてブ、スター、プルリクください！)</p>
-<p><a href="http://lotz84.github.io/haskellbyexample/"><img src="http://i.gyazo.com/bbfd8bf6052376e3adc572f4dcc64bad.png" alt=""></a></p>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Haskell by Exampleを公開しました</title>
+        <meta name="viewport" content="width=device-width" />
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora" />
+        <link rel="stylesheet" href="../css/kube.min.css" />
+        <link rel="stylesheet" href="../css/prism.css" />
+        <link rel="stylesheet" href="../css/main.css" />
+        <link rel="stylesheet" href="../font/octicons.css" />
+        <script type="text/javascript" src="../js/prism.js"></script>
+    </head>
+    <body>
+        <div class="units-row units-padding">
+            <div class="unit-20 sidemenu">
+                <h1><a href="../">flip map <img src="../img/samurai.png" style="margin:-15px 0 0 -30px;width:60px"></a></h1>
+                <p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160"></a></p>
+                <h2>Index</h2>
+                <ul>
+                    <li><a href="../about"><span class="octicon octicon-person"></span> About</a></li>
+                    <li><a href="../posts"><span class="octicon octicon-file-text"></span> Blog</a></li>
+                    <li><a href="https://github.com/lotz84" target="blank_"><span class="octicon octicon-mark-github"></span> Github</a></li>
+                    <li><a href="https://twitter.com/lotz84_" target="blank_"><span class="octicon octicon-mention"></span> Twitter</a></li>
+                    <li><a href="../feed.xml" target="blank_"><span class="octicon octicon-rss"></span> RSS</a></li>
+                </ul>
+            </div>
+            <div class="unit-80">
+                <h1>Haskell by Exampleを公開しました</h1>
+<p>2015/05/06</p>
+<p>世の中はゴールデンウィークですね！今日は最終日です！！<br />
+GWは自由な時間がいっぱいあるのでたくさん勉強ができますね！（イヤッホー！）<br />
+というわけで暇な時間を持て余して<a href="http://lotz84.github.io/haskellbyexample/"><em>Haskell by Example</em></a>というコンテンツを作りました。(はてブ、スター、プルリクください！)</p>
+<p><a href="http://lotz84.github.io/haskellbyexample/"><img src="http://i.gyazo.com/bbfd8bf6052376e3adc572f4dcc64bad.png" alt /></a></p>
 <p>知ってる人も多いと思いますが[要出典]、もともと<a href="https://gobyexample.com/"><em>Go by Example</em></a>という<a href="https://golang.org/">Go</a>をExampleを通して学んでいこうという素晴らしいサイトがあって、Haskell by Exampleはそれを出来るだけそのまま<a href="https://www.haskell.org/">Haskell</a>に翻訳したものです。</p>
 <p>これを作った狙いはいくつかあって</p>
 <ul>
@@ -12,29 +44,45 @@
 <p>Haskellは研究でも使われている言語なので入門となるとどうしても理論中心になってしまう気がするのですが、自分は普通に仕事でも使いたいと思ってるのでそういう人のためにも読んですぐ書けるようになるような入門が必要だと思いました。そんなこんなで昔お世話になった<em>Go by Example</em>をHaskellで書きなおそうと思ったわけです。</p>
 <p>最初はHaskellだってなんでも書けるんだぞー！と思って作ってたのですが当然言語には向き不向きがあるわけでGoの良いところもあらためて勉強になりました。やっぱり非同期強い！</p>
 <p>まずはSelect文。これはあらためて別の記事でも書こうと思ってるのですが、GoのSelect文に相当する機能がHaskellにはなくて無理やり自作しました。ネットで検索すると<a href="http://stackoverflow.com/questions/5879128/a-way-to-form-a-select-on-mvars-without-polling">STMで実装する方法</a>とかも出てきましたが結局ひたすらMVarをtryする方法で実装しました。時間があれば他の方法も試してみたいです。とにかくHaskellでは以下のように書けるようになりました。</p>
-<pre><code class="language-haskell">select [ Case messages $ \msg -&gt; putStrLn $ &quot;received message &quot; ++ msg
-       , Case signals  $ \sig -&gt; putStrLn $ &quot;received signal &quot; ++ show sig
-       , Default $ putStrLn &quot;no activiry&quot;
-       ]
-</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">select [ <span class="dt">Case</span> messages <span class="fu">$</span> \msg <span class="ot">-&gt;</span> putStrLn <span class="fu">$</span> <span class="st">&quot;received message &quot;</span> <span class="fu">++</span> msg
+       , <span class="dt">Case</span> signals  <span class="fu">$</span> \sig <span class="ot">-&gt;</span> putStrLn <span class="fu">$</span> <span class="st">&quot;received signal &quot;</span> <span class="fu">++</span> show sig
+       , <span class="dt">Default</span> <span class="fu">$</span> putStrLn <span class="st">&quot;no activiry&quot;</span>
+       ]</code></pre></div>
 <p>元のSelect文そっくりですね(๑´ڡ`๑)</p>
-<p>次にatomicです。Haskellでは代わりにSTMを使ってみましたが、失敗でした／(^o^)＼。atomic が low-level なのに対してSTMは high-level ですからそもそも引き合いに出すのもおかしいと思うのですが、Goの例では50スレッドでひたすら1を毎回足すみたいな処理をやっていてそれをSTMでやろうとしたものですからたちまちメモリが食いつぶされてしまいました。なので毎回スレッドを眠らせるなどして何とか動くようにしましたが実行効率はかなり悪いですね… 普通にwithMVarとかで書いたほうがいいのだろうかとか思いつつ結局直さないままになっています。誰か助けて／(^o^)＼</p>
+<p>次にatomicです。Haskellでは代わりにSTMを使ってみましたが、失敗でした／(<sup>o</sup>)＼。atomic が low-level なのに対してSTMは high-level ですからそもそも引き合いに出すのもおかしいと思うのですが、Goの例では50スレッドでひたすら1を毎回足すみたいな処理をやっていてそれをSTMでやろうとしたものですからたちまちメモリが食いつぶされてしまいました。なので毎回スレッドを眠らせるなどして何とか動くようにしましたが実行効率はかなり悪いですね… 普通にwithMVarとかで書いたほうがいいのだろうかとか思いつつ結局直さないままになっています。誰か助けて／(<sup>o</sup>)＼</p>
 <p>あとChan。GoのChanはclose出来るんですね！カッコイイ！<a href="http://hackage.haskell.org/package/base/docs/Control-Concurrent-Chan.html">HaskellのChan</a>は無限長のチャネルを作ったらあとはひたすら読み書きするだけで閉じることができません… 閉じれないと何が不便かというともうデータが来ないという時点がわからないので<code>getChanContents</code>を使ってリストとして取り出しても無限長リストになってるし工夫しないと永遠に終わらない処理しか書けなくなってしまいます。なので<code>ClosableChan</code>みたいなデータ構造を作って開閉出来るようにすればいいと思うのですがめんどくさくなって放置しました…</p>
 <p>あとTime。いっぱい型あるし小回りがきかなくて苦労しました…</p>
 <p>なんだか愚痴っぽくなってしまいましたが読んでて分かる通り自分の無知と怠惰の結果な気もするのでもう少しがんばって修正しようと思います(^_^;)</p>
 <p>あと当然HaskellにできてGoにできないこともたくさんあって<s>例えば正規表現は書きませんでしたが</s>(<a href="http://lotz84.github.io/haskellbyexample/ex/regular-expressions">書きました</a>)HaskellにはParsecという強力なパーサコンビネータがあります。STMもちゃんと使えばとても便利なものですし、MonadもLensもGoに無いから書いてないだけで必ず学ぶべきトピックだと思います。なので今後<em>Go by Example</em>からはみ出てHaskell特有のコードを書いていくこともしていきたいですね。</p>
-<p>最後に、見たらすぐわかると思うのですが<em>Haskell by Example</em>の方には説明文がありません。理由は単純で僕が英語できないからです／(^o^)＼もしも反響が大きくてGithubのスターが1000とか超えたらその時は英会話教室とかに通って英語勉強して説明もつけようと思いますｗ</p>
-<p>以上いろいろ課題はあるのですが、今後もしばらく運用していくつもりなので<a href="http://lotz84.github.io/haskellbyexample/"><em>Haskell by Example</em></a>をよろしくお願いしますm(__)m<br>またちょっとした修正とか気になったとことか俺が実装しなおしてやったよとかありましたらIssue/PullRequestを遠慮無くお願いします！<br><a href="https://github.com/lotz84/haskellbyexample">lotz84/haskellbyexample</a><br>日本語でも大丈夫ですのでー！  </p><table><tr><td><a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script><a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-</script><div id="fb-root"></div><script>(function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div></td><td><script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><ins style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-1606689071691648" data-ad-slot="9741642218" class="adsbygoogle"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></td></tr></table></div></div><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<p>最後に、見たらすぐわかると思うのですが<em>Haskell by Example</em>の方には説明文がありません。理由は単純で僕が英語できないからです／(<sup>o</sup>)＼もしも反響が大きくてGithubのスターが1000とか超えたらその時は英会話教室とかに通って英語勉強して説明もつけようと思いますｗ</p>
+<p>以上いろいろ課題はあるのですが、今後もしばらく運用していくつもりなので<a href="http://lotz84.github.io/haskellbyexample/"><em>Haskell by Example</em></a>をよろしくお願いしますm(__)m<br />
+またちょっとした修正とか気になったとことか俺が実装しなおしてやったよとかありましたらIssue/PullRequestを遠慮無くお願いします！<br />
+<a href="https://github.com/lotz84/haskellbyexample">lotz84/haskellbyexample</a><br />
+日本語でも大丈夫ですのでー！</p>
+<div>
+    <a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div>
+</div>
 
-ga('create', 'UA-38246049-16', 'auto');
-ga('send', 'pageview');</script></body></html>
+            </div>
+        </div>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-38246049-16', 'auto');
+            ga('send', 'pageview');
+        </script>
+    </body>
+</html>
