@@ -1,0 +1,28 @@
+---
+title: flip map
+---
+
+<iframe src="https://duckduckgo.com/search.html?width=408&duck=yes&site=http://lotz84.github.io/&prefill=Search DuckDuckGo" style="overflow:hidden;margin:0;padding:0;width:541px;height:60px;" frameborder="0"></iframe>
+
+<div style="float:left;width:45%">
+    <div class="github-card" data-github="lotz84" data-width="400" data-height="" data-theme="default"></div>
+    <script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+
+    <img src="/img/top.jpg" style="margin-top:10px;width:400px" />
+</div>
+
+<div style="float:left;width:55%">
+    $partial("templates/post-list.html")$
+</div>
+
+<link rel="stylesheet" href="/css/libnotify.css">
+<script src="/js/humane.min.js"></script>
+<script>
+
+humane.timeout = 0;
+humane.clickToClose = true;
+humane.log("新着記事はこちら", function(){
+    window.location = document.querySelectorAll("#posts a")[0].href;
+});
+
+</script>
