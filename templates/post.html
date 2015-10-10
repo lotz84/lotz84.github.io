@@ -1,4 +1,4 @@
-<h1>$title$</h1>
+<h1><a href="$surl$">$title$</a></h1>
 <p>$date$</p>
 $body$
 <div>
@@ -14,3 +14,13 @@ $body$
         }(document, 'script', 'facebook-jssdk'));
     </script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div>
 </div>
+
+<div class="hatena-bookmark-marker"></div>
+
+<script type="text/javascript" charset="utf-8" src="http://b.hatena.ne.jp/js/bookmark_blogparts.js"></script>
+<script type="text/javascript">
+HBBlogParts.commentInsertSelector = [ 'div.hatena-bookmark-marker'];
+HBBlogParts.permalinkSelector = [ 'div.entry-body-main h1 a'];
+HBBlogParts.permalinkAttribute = 'href';
+HBBlogParts.permalinkPathRegexp = /\/posts\/.*\.html/;
+</script>

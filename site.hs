@@ -41,9 +41,10 @@ main = hakyll $ do
 
     match "posts/*" $ do
         route $ setExtension "html"
+        let postsCtx = shortUrlField `mappend` postCtx
         compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/post.html" postCtx
-            >>= loadAndApplyTemplate "templates/default.html" postCtx
+            >>= loadAndApplyTemplate "templates/post.html" postsCtx
+            >>= loadAndApplyTemplate "templates/default.html" postsCtx
             >>= relativizeUrls
 
     match "index.html" $ do

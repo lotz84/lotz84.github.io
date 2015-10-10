@@ -6,6 +6,11 @@ h1, h2, h3, h4, h5, h6, h7 {
     font-family:'Lora',serif;
 }
 
+div.entry-body-main h1 a {
+    color: black;
+    text-decoration: none;
+}
+
 .sidemenu a, #blog-index a {
     color:#000;
     text-decoration:none;
