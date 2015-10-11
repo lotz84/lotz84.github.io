@@ -5,27 +5,38 @@
         <title>Swift で分割コンパイルする方法</title>
         <meta name="viewport" content="width=device-width" />
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora" />
-        <link rel="stylesheet" href="../css/kube.min.css" />
+        <link rel="stylesheet" href="../css/bootstrap.min.css" />
         <link rel="stylesheet" href="../css/prism.css" />
         <link rel="stylesheet" href="../css/main.css" />
-        <link rel="stylesheet" href="../font/octicons.css" />
-        <script type="text/javascript" src="../js/prism.js"></script>
+        <link rel="stylesheet" href="../fonts/octicons.css" />
     </head>
     <body>
-        <div class="units-row units-padding">
-            <div class="unit-20 sidemenu">
-                <h1><a href="../">flip map <img src="../img/samurai.png" style="margin:-15px 0 0 -30px;width:60px"></a></h1>
-                <p><a href="https://placekitten.com/"><img src="https://placekitten.com/g/200/160"></a></p>
-                <h2>Index</h2>
-                <ul>
-                    <li><a href="../about"><span class="octicon octicon-person"></span> About</a></li>
-                    <li><a href="../posts"><span class="octicon octicon-file-text"></span> Blog</a></li>
-                    <li><a href="https://github.com/lotz84" target="blank_"><span class="octicon octicon-mark-github"></span> Github</a></li>
-                    <li><a href="https://twitter.com/lotz84_" target="blank_"><span class="octicon octicon-mention"></span> Twitter</a></li>
-                    <li><a href="../feed.xml" target="blank_"><span class="octicon octicon-rss"></span> RSS</a></li>
-                </ul>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="../">flip map</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="../about"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> About</a></li>
+                        <li><a href="../posts"><span class="glyphicon glyphicon-book"></span> Blog</a></li>
+                        <li><a href="https://github.com/lotz84" target="blank_"><span class="octicon octicon-mark-github"></span> Github</a></li>
+                        <li><a href="https://twitter.com/lotz84_" target="blank_"><span class="octicon octicon-mention"></span> Twitter</a></li>
+                        <li><a href="../feed.xml" target="blank_"><span class="octicon octicon-rss"></span> RSS</a></li>
+                    </ul>
+                    <script>function searchDuckDuckGo(e) {var q = $("form.duckduckgo-search input[name=q]");q.val(q.val()+" site:http://lotz84.github.io/");}</script>
+                    <form class="duckduckgo-search navbar-form navbar-left" role="search" method="GET" action="https://duckduckgo.com/" onsubmit="searchDuckDuckGo()">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="q" placeholder="Search DuckDuckGo">
+                        </div>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </form>
+                </div>
             </div>
-            <div class="unit-80 entry-body-main">
+        </nav>
+        <div class="row entry-body-main">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
                 <h1><a href="../posts/the-way-of-separate-compilation-in-swift">Swift で分割コンパイルする方法</a></h1>
 <p>2015/02/07</p>
 <p>コマンドラインからswiftを分割コンパイルする方法を試行錯誤した結果を残しておきます</p>
@@ -67,6 +78,7 @@ $ <span class="kw">./main</span>
 <span class="kw">hello</span></code></pre></div>
 <div>
     <a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    <br />
     <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
     <div id="fb-root"></div>
     <script>(function(d, s, id) {
@@ -90,7 +102,11 @@ HBBlogParts.permalinkPathRegexp = /\/posts\/.*/;
 </script>
 
             </div>
+            <div class="col-md-1"></div>
         </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script type="text/javascript" src="../js/prism.js"></script>
+        <script type="text/javascript" src="../js/bootstrap.min.js"></script>
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
