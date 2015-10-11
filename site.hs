@@ -9,7 +9,7 @@ main = hakyll $ do
         route   idRoute
         compile copyFileCompiler
 
-    match "font/*" $ do
+    match "fonts/*" $ do
         route   idRoute
         compile copyFileCompiler
 
@@ -21,11 +21,12 @@ main = hakyll $ do
         route   idRoute
         compile compressCssCompiler
 
-    match "about.md" $ do
-        route   $ setExtension "html"
-        compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/default.html" defaultContext
-            >>= relativizeUrls
+    match "about.html" $ do
+        route   $ idRoute
+        compile $ do
+            getResourceBody
+                >>= loadAndApplyTemplate "templates/default.html" defaultContext
+                >>= relativizeUrls
 
     create ["posts/index.html"] $ do
         route   idRoute
