@@ -1,6 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
 import Data.Monoid (mappend)
-import Debug.Trace
 import Hakyll
 
 main :: IO ()
@@ -79,5 +78,5 @@ myFeedConfiguration = FeedConfiguration
     , feedDescription = ""
     , feedAuthorName  = "Tatsuya Hirose"
     , feedAuthorEmail = ""
-    , feedRoot        = "http://lotz84.github.io/posts/"
+    , feedRoot        = "http://lotz84.github.io"
     }
