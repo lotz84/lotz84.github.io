@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>エンジニアのための『Haskell入門』</title>
+        <meta name="viewport" content="width=device-width" />
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lora" />
+        <link rel="stylesheet" href="../css/bootstrap.min.css" />
+        <link rel="stylesheet" href="../css/prism.css" />
+        <link rel="stylesheet" href="../css/main.css" />
+        <link rel="stylesheet" href="../fonts/octicons.css" />
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="../">flip map</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="../about"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> About</a></li>
+                        <li><a href="../posts"><span class="glyphicon glyphicon-book"></span> Blog</a></li>
+                        <li><a href="https://github.com/lotz84" target="blank_"><span class="octicon octicon-mark-github"></span> Github</a></li>
+                        <li><a href="https://twitter.com/lotz84_" target="blank_"><span class="octicon octicon-mention"></span> Twitter</a></li>
+                        <li><a href="../feed.xml" target="blank_"><span class="octicon octicon-rss"></span> RSS</a></li>
+                    </ul>
+                    <script>function searchDuckDuckGo(e) {var q = $("form.duckduckgo-search input[name=q]");q.val(q.val()+" site:http://lotz84.github.io/");}</script>
+                    <form class="duckduckgo-search navbar-form navbar-left" role="search" method="GET" action="https://duckduckgo.com/" onsubmit="searchDuckDuckGo()">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="q" placeholder="Search DuckDuckGo">
+                        </div>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+        <div class="row entry-body-main">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <h1><a href="../posts/an-introduction-to-haskell-for-engineers">エンジニアのための『Haskell入門』</a></h1>
+<p>2017/10/03</p>
+<p>（この記事は『Haskell入門 関数型プログラミング言語の基礎と実践』の書評もとい宣伝です）</p>
+<p>Haskell は研究者から開発者まで様々な人が関わり発展している言語です。純粋なエンジニアがHaskellを学び始めるとファンクタやモナドなど数学由来の概念に惑わされ、まともなアプリケーションを開発できるスキルを身につけるところまでたどり着かないというのはよくある話だと思います。これらの概念は決していたずらにHaskellを難しいものにしているわけではなく、むしろ他の言語にはない素晴らしい機能を提供してくれるものです。しかし学習の段階ではどこまで学ぶべきか折り合いをつけるのが難しく入門の敷居を高くしてしまっているのも事実です。</p>
+<p><img src="https://i.gyazo.com/70659db6bd3b1fc0b61b38c515f36b86.png" align="left" style="margin-right: 15px; border-radius: 5px;" /></p>
+<p>技術評論社より新しく出版された<a href="https://www.amazon.co.jp/dp/4774192376">『Haskell入門 関数型プログラミング言語の基礎と実践』</a>は「まったくの初心者がHaskellでアプリケーションを作れるようになるまでの最短ルートが書かれた本」だと思います。基本的な文法解説はもちろん、モダンな開発環境の構築方法からコマンドラインツールやWebアプリケーション作成の具体例までカバーされているかなり贅沢な内容です。前述したような数学由来の概念はツールとしてどのように使うべきかと言うところに焦点が当てられて解説されており、エンジニアにとってはかなり分かりやすいものになっていると思います。<code>第5章 モナド</code>よりも先に<code>第4章 I/O処理</code>が独立して用意されていることからも、いかにアプリケーションが作れるようになるかを重視されているかが分かります。</p>
+<p>手に取ると思ったよりも大きな本です。ページ数は432と分厚いですが、本全体を通して動くコードがたくさん載っていて「すべてを書いて理解する」と書いてあるように自分で手を動かして理解したい人にはもってこいだと思います。表紙に紫と青で書かれたリストの括弧はとても印象的で、僕はリスト本と愛称で呼んでいたりします。</p>
+<p>著者の１人である hiratara さんは<a href="http://hiratara.hatenadiary.jp/entry/2017/09/17/104015">自身のブログ</a>で</p>
+<blockquote>
+<p>今回執筆したHaskell入門ではとにかくHaskellでアプリケーションを作ることにフォーカスし、1冊読むだけで自分の作りたいアプリケーションが作れるようになることを目指して書かれた本です。</p>
+</blockquote>
+<p>と書かれています。実際に読んでみると、</p>
+<ul>
+<li>エラーが出た時の対処法について書かれている</li>
+<li>例外処理について詳しく書かれている</li>
+<li>テストの書き方が載っている</li>
+<li>並行並列処理に関しても触れられている</li>
+<li>JSONの扱い方が載っている</li>
+<li>実際によく使われるライブラリが紹介されている</li>
+</ul>
+<p>などの特徴は今までのHaskelの入門書とは一線を画していて実戦重視の内容になっていると思います。また執筆時に載せられなかった内容もQiitaに投稿されていてこちらの記事も合わせて読むとより理解が深まるでしょう。</p>
+<ul>
+<li><a href="https://qiita.com/hiratara/items/378e14b5d200fb8838fd">Stackで単体テストを書いて実行する - Haskell入門より - Qiita</a></li>
+<li><a href="https://qiita.com/hiratara/items/4309484f942043fe4a17">WAIアプリケーションの単体テスト - Haskell入門より - Qiita</a></li>
+</ul>
+<p>僕は『Haskell入門』にはレビューの時から関わらせていただいて、その時から早くこの本が出版されないかなと楽しみにしていました。冒頭でも述べたようにHaskellには純粋なエンジニアには慣れないワードや概念が少なくないため入門する敷居が高いと言われています。しかし実践を見据えて書かれている『Haskell入門』は新しく学びたい人や一度挫折してしまった人にも読んでほしい本です。最後に、もしHaskellを学んでいてわからないことが出てきたら周りの人に質問してみるのも良いかもしれません。日本にはHaskell-jpというユーザーグループがあり、Slackでは誰でも気軽に質問できるチャネルが用意されています（雰囲気を知りたい方は<a href="https://haskell-jp.slackarchive.io/questions/page-17">こちら</a>）。<a href="https://join-haskell-jp-slack.herokuapp.com/">Slackに参加</a>して気軽に質問を投げてみるのも学習の近道かもしれません。</p>
+<div>
+    <a href="http://b.hatena.ne.jp/entry/" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加" class="hatena-bookmark-button"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    <br />
+    <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.3";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script><div data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" class="fb-like"></div>
+</div>
+
+<div class="hatena-bookmark-marker"></div>
+
+<script type="text/javascript" charset="utf-8" src="http://b.hatena.ne.jp/js/bookmark_blogparts.js"></script>
+<script type="text/javascript">
+HBBlogParts.commentInsertSelector = [ 'div.hatena-bookmark-marker'];
+HBBlogParts.permalinkSelector = [ 'div.entry-body-main h1 a'];
+HBBlogParts.permalinkAttribute = 'href';
+HBBlogParts.permalinkPathRegexp = /\/posts\/.*/;
+</script>
+
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script type="text/javascript" src="../js/prism.js"></script>
+        <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-38246049-16', 'auto');
+            ga('send', 'pageview');
+        </script>
+    </body>
+</html>

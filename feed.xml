@@ -7,8 +7,16 @@
         <description><![CDATA[]]></description>
         <atom:link href="http://lotz84.github.io/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Wed, 06 May 2015 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Tue, 03 Oct 2017 00:00:00 UT</lastBuildDate>
         <item>
+    <title>エンジニアのための『Haskell入門』</title>
+    <link>http://lotz84.github.io/posts/an-introduction-to-haskell-for-engineers.html</link>
+    <description><![CDATA[]]></description>
+    <pubDate>Tue, 03 Oct 2017 00:00:00 UT</pubDate>
+    <guid>http://lotz84.github.io/posts/an-introduction-to-haskell-for-engineers.html</guid>
+    <dc:creator>Tatsuya Hirose</dc:creator>
+</item>
+<item>
     <title>Haskell by Exampleを公開しました</title>
     <link>http://lotz84.github.io/posts/published_haskell_by_example.html</link>
     <description><![CDATA[]]></description>
